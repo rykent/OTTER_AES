@@ -1,6 +1,6 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1713280495" />
-    <testcase name="basic_count" classname="benchmark" file="/home/ryken/Documents/CPE333/OTTER_multicycle_base/tb/benchmark.py" lineno="6" time="1.5919387340545654" sim_time_ns="220600.001" ratio_time="138573.17262338733" />
+    <property name="random_seed" value="1791869858" />
+    <testcase name="basic_count" classname="benchmark" file="/home/ryken/Documents/EE5300/OTTER_5stage/tb/benchmark.py" lineno="6" time="0.11376118659973145" sim_time_ns="120600.0" ratio_time="1060115.5245007325" />
   </testsuite>
 </testsuites>

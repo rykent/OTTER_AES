@@ -19,7 +19,29 @@ async def basic_count(dut):
     dut.SWITCHES.value = 0
 
 
+    cycles = 0
+    instructions = 0
+
+
     dut._log.info("Starting Program")
-    while dut.CPU.pc_bus.value != PC_END:
+    while dut.CPU.wb_pc.value != PC_END:
         await RisingEdge(dut.clk_50)
-    pass
+
+        cycles += 1
+
+        #Only increment instr count on non-bubble instr
+        if int(dut.CPU.wb_pc.value) != 0:
+            instructions += 1
+    
+
+    if (cycles > 0):
+        ipc = instructions / cycles
+    else:
+        ipc = 0.0
+
+    dut._log.info("======================================================")
+    dut._log.info(f"  Target PC reached : 0x{PC_END:x}")
+    dut._log.info(f"  Total CPU Cycles  : {cycles}")
+    dut._log.info(f"  Retired Insts     : {instructions}")
+    dut._log.info(f"  IPC               : {ipc:.4f} inst/cycle")
+    dut._log.info("======================================================")

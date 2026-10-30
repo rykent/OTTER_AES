@@ -1,0 +1,10 @@
+#Cocotb build artifacts
+sim_build/
+*.fst
+*.vcd
+*.xml
+
+#Python cache
+__pycache__/
+*.pyc
+

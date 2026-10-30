@@ -72,7 +72,7 @@
     (* ram_decomp = "power" *) logic [31:0] memory [0:16383];
     
     initial begin
-        $readmemh("/home/ryken/Documents/CPE333/OTTER_5stage_nohazards/mem/matsum50x50.mem", memory);
+        $readmemh("/home/ryken/Documents/EE5300/OTTER_5stage/mem/test_all.mem", memory);
     end
     
 
@@ -86,9 +86,10 @@
             
     // buffer the IO input for reading
     always_ff @(posedge MEM_CLK) begin
-      if(MEM_RDEN2)
+      if(MEM_RDEN2) begin
         ioBuffer <= IO_IN;
         memAddr2Buffer <= MEM_ADDR2;
+      end
     end
     
     // BRAM requires all reads and writes to occur synchronously
@@ -119,8 +120,9 @@
         MEM_DOUT1 <= memory[MEM_ADDR1];
       end
 
-      if (MEM_RDEN2)                       // Read word from memory
+      if (MEM_RDEN2) begin                       // Read word from memory
         memReadWord <= memory[wordAddr2];
+      end
     end
        
     // Change the data word into sized bytes and sign extend

@@ -54,6 +54,7 @@ module OTTER_MCU(
     } ID_EX_r;
 
     struct packed {
+        logic [31:0] pc;
         logic [31:0] npc;
         logic [1:0] memSize;
         logic memSign;
@@ -68,6 +69,7 @@ module OTTER_MCU(
     } EX_MEM_r;
 
     struct packed {
+        logic [31:0] pc;
         logic [31:0] npc;
         logic regWrite;
         logic memWrite;
@@ -320,6 +322,7 @@ module OTTER_MCU(
         if(RST) begin
              EX_MEM_r <= 0;
         end else begin
+            EX_MEM_r.pc <= ID_EX_r.pc;
             EX_MEM_r.npc <= ID_EX_r.npc;
             EX_MEM_r.memSize <= ID_EX_r.instr[13:12];
             EX_MEM_r.memSign <= ID_EX_r.instr[14];
@@ -428,6 +431,7 @@ module OTTER_MCU(
         if(RST) begin
             MEM_WB_r <= 0;
         end else begin
+            MEM_WB_r.pc <= EX_MEM_r.pc;
             MEM_WB_r.npc <= EX_MEM_r.npc;
             MEM_WB_r.rs2_data <= EX_MEM_r.rs2_data;
             MEM_WB_r.memWrite <= EX_MEM_r.memWrite;
@@ -441,7 +445,8 @@ module OTTER_MCU(
         end
     end
 
-
+    logic [31:0] wb_pc;
+    assign wb_pc = MEM_WB_r.pc;
 
 
     //**************************************************************************
