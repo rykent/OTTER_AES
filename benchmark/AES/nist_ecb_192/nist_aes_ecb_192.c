@@ -12,12 +12,13 @@
 // #define MODE_RV32I_ZNKE_ZKND
 
 //Include AES functions
-#include "aes.h"
+#include "../aes.h"
 
 //Include test data, to be stored in rodata
-#include "ecbgfsbox192.h"
-#include "ecbkeysbox192.h"
-#include "ecbvartxt192.h"
+#include "../headers/ecbgfsbox192.h"
+#include "../headers/ecbkeysbox192.h"
+#include "../headers/ecbvarkey192.h"
+#include "../headers/ecbvartxt192.h"
 
 //Test PASS and ERROR helpers:
 // __attribute__((noinline, noreturn)) guarantees GCC creates dedicated,
@@ -85,6 +86,28 @@ void main() {
                     computed_data);
         for (int j = 0; j < 4; j++){
             if (computed_data[j] != ecbkeysbox192_decrypt_vectors[i].pt[j])
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    //Test Encryption ECBVARKEY192
+    for (int i = 0; i < NUM_ECBVARKEY192_ENCRYPT_VECTORS; i++) {
+        aes_192_enc(ecbvarkey192_encrypt_vectors[i].pt,
+                    ecbvarkey192_encrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+            if (computed_data[j] != ecbvarkey192_encrypt_vectors[i].ct[j])
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    //Test Decryption ECBVARKEY192
+    for (int i = 0; i < NUM_ECBVARKEY192_DECRYPT_VECTORS; i++) {
+        aes_192_dec(ecbvarkey192_decrypt_vectors[i].ct,
+                    ecbvarkey192_decrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+            if (computed_data[j] != ecbvarkey192_decrypt_vectors[i].pt[j])
                 test_error(i, j); //TEST failed, jump to fail loop
         }
     }

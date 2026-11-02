@@ -1,0 +1,3237 @@
+
+build/ecb_128.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .text.init:
+
+00000000 <entry>:
+entry():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/init.s:8
+
+.section .text.init
+.globl entry
+entry:
+
+    la    sp, __sp   # set up the stack pointer, using a constant defined in the linker script.
+   0:	00010117          	auipc	sp,0x10
+   4:	00010113          	mv	sp,sp
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/init.s:10
+  
+    call  main          # call the main function if barebones assembly/C
+   8:	018000ef          	jal	20 <main>
+
+0000000c <end>:
+end():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/init.s:13
+
+end:
+    j end               # loop when finished if there is no environment to return to.
+   c:	0000006f          	j	c <end>
+
+Disassembly of section .text:
+
+00000010 <test_error>:
+test_error():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:29
+__attribute__((noinline, noreturn))
+void test_error(uint32_t vector_idx, uint32_t word_idx) {
+    // vector_idx is in register a0 (x10)
+    // word_idx   is in register a1 (x11)
+    while (1) {
+        __asm__ volatile ("j ."); // Infinite branch loop to self: PC sticks here
+      10:	0000006f          	j	10 <test_error>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:28
+    while (1) {
+      14:	ffdff06f          	j	10 <test_error>
+
+00000018 <test_pass>:
+test_pass():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:36
+}
+
+__attribute__((noinline, noreturn))
+void test_pass(void) {
+    while (1) {
+        __asm__ volatile ("j ."); // Infinite branch loop on success
+      18:	0000006f          	j	18 <test_pass>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:35
+    while (1) {
+      1c:	ffdff06f          	j	18 <test_pass>
+
+00000020 <main>:
+main():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:41
+    }
+}
+
+//Main test vectors
+void main() {
+      20:	fe010113          	addi	sp,sp,-32 # ffe0 <_edata+0x765c>
+      24:	00812c23          	sw	s0,24(sp)
+      28:	00008437          	lui	s0,0x8
+      2c:	00912a23          	sw	s1,20(sp)
+      30:	01212823          	sw	s2,16(sp)
+      34:	00112e23          	sw	ra,28(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:42
+    uint32_t computed_data[4] = {0};
+      38:	00012023          	sw	zero,0(sp)
+      3c:	00012223          	sw	zero,4(sp)
+      40:	00012423          	sw	zero,8(sp)
+      44:	00012623          	sw	zero,12(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:45 (discriminator 2)
+
+    //Test Encryption ECBGFSBOX128
+    for (int i = 0; i < NUM_ECBGFSBOX128_ENCRYPT_VECTORS; i++) {
+      48:	60440413          	addi	s0,s0,1540 # 8604 <ecbgfsbox128_encrypt_vectors+0x14>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:45
+      4c:	00000493          	li	s1,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:45 (discriminator 2)
+      50:	00700913          	li	s2,7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:46
+        aes_128_enc(ecbgfsbox128_encrypt_vectors[i].pt,
+      54:	00010613          	mv	a2,sp
+      58:	ff040593          	addi	a1,s0,-16
+      5c:	00040513          	mv	a0,s0
+      60:	3e4000ef          	jal	444 <aes_128_enc>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:50 (discriminator 32768)
+                    ecbgfsbox128_encrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+            if (computed_data[j] != ecbgfsbox128_encrypt_vectors[i].ct[j])
+      64:	00012703          	lw	a4,0(sp)
+      68:	01042783          	lw	a5,16(s0)
+      6c:	2af71463          	bne	a4,a5,314 <main+0x2f4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:50 (discriminator 65536)
+      70:	00412703          	lw	a4,4(sp)
+      74:	01442783          	lw	a5,20(s0)
+      78:	2af71463          	bne	a4,a5,320 <main+0x300>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:50 (discriminator 98304)
+      7c:	00812703          	lw	a4,8(sp)
+      80:	01842783          	lw	a5,24(s0)
+      84:	2af71263          	bne	a4,a5,328 <main+0x308>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:50 (discriminator 131072)
+      88:	00c12703          	lw	a4,12(sp)
+      8c:	01c42783          	lw	a5,28(s0)
+      90:	2af71063          	bne	a4,a5,330 <main+0x310>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:45 (discriminator 1)
+    for (int i = 0; i < NUM_ECBGFSBOX128_ENCRYPT_VECTORS; i++) {
+      94:	00148493          	addi	s1,s1,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:45 (discriminator 2)
+      98:	03440413          	addi	s0,s0,52
+      9c:	fb249ce3          	bne	s1,s2,54 <main+0x34>
+      a0:	00008437          	lui	s0,0x8
+      a4:	4a840413          	addi	s0,s0,1192 # 84a8 <ecbgfsbox128_decrypt_vectors+0x24>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:56
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    //Test Decryption ECBGFSBOX128
+    for (int i = 0; i < NUM_ECBGFSBOX128_DECRYPT_VECTORS; i++) {
+      a8:	00000493          	li	s1,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:56 (discriminator 2)
+      ac:	00700913          	li	s2,7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:57
+        aes_128_dec(ecbgfsbox128_decrypt_vectors[i].ct,
+      b0:	00010613          	mv	a2,sp
+      b4:	fe040593          	addi	a1,s0,-32
+      b8:	00040513          	mv	a0,s0
+      bc:	68d000ef          	jal	f48 <aes_128_dec>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:61 (discriminator 32768)
+                    ecbgfsbox128_decrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+            if (computed_data[j] != ecbgfsbox128_decrypt_vectors[i].pt[j])
+      c0:	00012703          	lw	a4,0(sp)
+      c4:	ff042783          	lw	a5,-16(s0)
+      c8:	24f71663          	bne	a4,a5,314 <main+0x2f4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:61 (discriminator 65536)
+      cc:	00412703          	lw	a4,4(sp)
+      d0:	ff442783          	lw	a5,-12(s0)
+      d4:	24f71663          	bne	a4,a5,320 <main+0x300>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:61 (discriminator 98304)
+      d8:	00812703          	lw	a4,8(sp)
+      dc:	ff842783          	lw	a5,-8(s0)
+      e0:	24f71463          	bne	a4,a5,328 <main+0x308>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:61 (discriminator 131072)
+      e4:	00c12703          	lw	a4,12(sp)
+      e8:	ffc42783          	lw	a5,-4(s0)
+      ec:	24f71263          	bne	a4,a5,330 <main+0x310>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:56 (discriminator 1)
+    for (int i = 0; i < NUM_ECBGFSBOX128_DECRYPT_VECTORS; i++) {
+      f0:	00148493          	addi	s1,s1,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:56 (discriminator 2)
+      f4:	03440413          	addi	s0,s0,52
+      f8:	fb249ce3          	bne	s1,s2,b0 <main+0x90>
+      fc:	00008437          	lui	s0,0x8
+     100:	05440413          	addi	s0,s0,84 # 8054 <ecbkeysbox128_encrypt_vectors+0x14>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:67
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    //Test Encryption ECBKEYSSBOX128
+    for (int i = 0; i < NUM_ECBKEYSBOX128_ENCRYPT_VECTORS; i++) {
+     104:	00000493          	li	s1,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:67 (discriminator 2)
+     108:	01500913          	li	s2,21
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:68
+        aes_128_enc(ecbkeysbox128_encrypt_vectors[i].pt,
+     10c:	00010613          	mv	a2,sp
+     110:	ff040593          	addi	a1,s0,-16
+     114:	00040513          	mv	a0,s0
+     118:	32c000ef          	jal	444 <aes_128_enc>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:72 (discriminator 32768)
+                    ecbkeysbox128_encrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+            if (computed_data[j] != ecbkeysbox128_encrypt_vectors[i].ct[j])
+     11c:	00012703          	lw	a4,0(sp)
+     120:	01042783          	lw	a5,16(s0)
+     124:	1ef71863          	bne	a4,a5,314 <main+0x2f4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:72 (discriminator 65536)
+     128:	00412703          	lw	a4,4(sp)
+     12c:	01442783          	lw	a5,20(s0)
+     130:	1ef71863          	bne	a4,a5,320 <main+0x300>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:72 (discriminator 98304)
+     134:	00812703          	lw	a4,8(sp)
+     138:	01842783          	lw	a5,24(s0)
+     13c:	1ef71663          	bne	a4,a5,328 <main+0x308>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:72 (discriminator 131072)
+     140:	00c12703          	lw	a4,12(sp)
+     144:	01c42783          	lw	a5,28(s0)
+     148:	1ef71463          	bne	a4,a5,330 <main+0x310>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:67 (discriminator 1)
+    for (int i = 0; i < NUM_ECBKEYSBOX128_ENCRYPT_VECTORS; i++) {
+     14c:	00148493          	addi	s1,s1,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:67 (discriminator 2)
+     150:	03440413          	addi	s0,s0,52
+     154:	fb249ce3          	bne	s1,s2,10c <main+0xec>
+     158:	00008437          	lui	s0,0x8
+     15c:	c2040413          	addi	s0,s0,-992 # 7c20 <ecbkeysbox128_decrypt_vectors+0x24>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:78
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    //Test Decryption ECBKEYSSBOX128
+    for (int i = 0; i < NUM_ECBKEYSBOX128_DECRYPT_VECTORS; i++) {
+     160:	00000493          	li	s1,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:78 (discriminator 2)
+     164:	01500913          	li	s2,21
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:79
+        aes_128_dec(ecbkeysbox128_decrypt_vectors[i].ct,
+     168:	00010613          	mv	a2,sp
+     16c:	fe040593          	addi	a1,s0,-32
+     170:	00040513          	mv	a0,s0
+     174:	5d5000ef          	jal	f48 <aes_128_dec>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:83 (discriminator 32768)
+                    ecbkeysbox128_decrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+            if (computed_data[j] != ecbkeysbox128_decrypt_vectors[i].pt[j])
+     178:	00012703          	lw	a4,0(sp)
+     17c:	ff042783          	lw	a5,-16(s0)
+     180:	18f71a63          	bne	a4,a5,314 <main+0x2f4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:83 (discriminator 65536)
+     184:	00412703          	lw	a4,4(sp)
+     188:	ff442783          	lw	a5,-12(s0)
+     18c:	18f71a63          	bne	a4,a5,320 <main+0x300>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:83 (discriminator 98304)
+     190:	00812703          	lw	a4,8(sp)
+     194:	ff842783          	lw	a5,-8(s0)
+     198:	18f71863          	bne	a4,a5,328 <main+0x308>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:83 (discriminator 131072)
+     19c:	00c12703          	lw	a4,12(sp)
+     1a0:	ffc42783          	lw	a5,-4(s0)
+     1a4:	18f71663          	bne	a4,a5,330 <main+0x310>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:78 (discriminator 1)
+    for (int i = 0; i < NUM_ECBKEYSBOX128_DECRYPT_VECTORS; i++) {
+     1a8:	00148493          	addi	s1,s1,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:78 (discriminator 2)
+     1ac:	03440413          	addi	s0,s0,52
+     1b0:	fb249ce3          	bne	s1,s2,168 <main+0x148>
+     1b4:	00006437          	lui	s0,0x6
+     1b8:	1fc40413          	addi	s0,s0,508 # 61fc <ecbvarkey128_encrypt_vectors>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:89
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    //Test Encryption ECBVARKEY128
+    for (int i = 0; i < NUM_ECBVARKEY128_ENCRYPT_VECTORS; i++) {
+     1bc:	00000913          	li	s2,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:93 (discriminator 2)
+        aes_128_enc(ecbvarkey128_encrypt_vectors[i].pt,
+                    ecbvarkey128_encrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+     1c0:	00400493          	li	s1,4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:90
+        aes_128_enc(ecbvarkey128_encrypt_vectors[i].pt,
+     1c4:	00440593          	addi	a1,s0,4
+     1c8:	00010613          	mv	a2,sp
+     1cc:	01440513          	addi	a0,s0,20
+     1d0:	274000ef          	jal	444 <aes_128_enc>
+     1d4:	00040713          	mv	a4,s0
+     1d8:	00010793          	mv	a5,sp
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:93
+        for (int j = 0; j < 4; j++){
+     1dc:	00000593          	li	a1,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:94
+            if (computed_data[j] != ecbvarkey128_encrypt_vectors[i].ct[j])
+     1e0:	0007a603          	lw	a2,0(a5)
+     1e4:	02472683          	lw	a3,36(a4)
+     1e8:	14d61863          	bne	a2,a3,338 <main+0x318>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:93 (discriminator 1)
+        for (int j = 0; j < 4; j++){
+     1ec:	00158593          	addi	a1,a1,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:93 (discriminator 2)
+     1f0:	00478793          	addi	a5,a5,4
+     1f4:	00470713          	addi	a4,a4,4
+     1f8:	fe9594e3          	bne	a1,s1,1e0 <main+0x1c0>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:89 (discriminator 1)
+    for (int i = 0; i < NUM_ECBVARKEY128_ENCRYPT_VECTORS; i++) {
+     1fc:	00190913          	addi	s2,s2,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:89 (discriminator 2)
+     200:	08000793          	li	a5,128
+     204:	03440413          	addi	s0,s0,52
+     208:	faf91ee3          	bne	s2,a5,1c4 <main+0x1a4>
+     20c:	00004437          	lui	s0,0x4
+     210:	7fc40413          	addi	s0,s0,2044 # 47fc <ecbvarkey128_decrypt_vectors>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:100
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    //Test Decryption ECBVARKEY128
+    for (int i = 0; i < NUM_ECBVARKEY128_DECRYPT_VECTORS; i++) {
+     214:	00000493          	li	s1,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:101
+        aes_128_dec(ecbvarkey128_decrypt_vectors[i].ct,
+     218:	00440593          	addi	a1,s0,4
+     21c:	00010613          	mv	a2,sp
+     220:	02440513          	addi	a0,s0,36
+     224:	525000ef          	jal	f48 <aes_128_dec>
+     228:	00040713          	mv	a4,s0
+     22c:	00010793          	mv	a5,sp
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:104
+                    ecbvarkey128_decrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+     230:	00000593          	li	a1,0
+     234:	00400693          	li	a3,4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:105
+            if (computed_data[j] != ecbvarkey128_decrypt_vectors[i].pt[j])
+     238:	0007a503          	lw	a0,0(a5)
+     23c:	01472603          	lw	a2,20(a4)
+     240:	0cc51c63          	bne	a0,a2,318 <main+0x2f8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:104 (discriminator 1)
+        for (int j = 0; j < 4; j++){
+     244:	00158593          	addi	a1,a1,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:104 (discriminator 2)
+     248:	00478793          	addi	a5,a5,4
+     24c:	00470713          	addi	a4,a4,4
+     250:	fed594e3          	bne	a1,a3,238 <main+0x218>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:100 (discriminator 1)
+    for (int i = 0; i < NUM_ECBVARKEY128_DECRYPT_VECTORS; i++) {
+     254:	00148493          	addi	s1,s1,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:100 (discriminator 2)
+     258:	03440413          	addi	s0,s0,52
+     25c:	fb249ee3          	bne	s1,s2,218 <main+0x1f8>
+     260:	00003437          	lui	s0,0x3
+     264:	dfc40413          	addi	s0,s0,-516 # 2dfc <ecbvartxt128_encrypt_vectors>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:111
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    //Test Encryption ECBVARTXT128
+    for (int i = 0; i < NUM_ECBVARTXT128_ENCRYPT_VECTORS; i++) {
+     268:	00000493          	li	s1,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:111 (discriminator 2)
+     26c:	08000913          	li	s2,128
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:112
+        aes_128_enc(ecbvartxt128_encrypt_vectors[i].pt,
+     270:	00440593          	addi	a1,s0,4
+     274:	00010613          	mv	a2,sp
+     278:	01440513          	addi	a0,s0,20
+     27c:	1c8000ef          	jal	444 <aes_128_enc>
+     280:	00040713          	mv	a4,s0
+     284:	00010793          	mv	a5,sp
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:115
+                    ecbvartxt128_encrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+     288:	00000593          	li	a1,0
+     28c:	00400693          	li	a3,4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:116
+            if (computed_data[j] != ecbvartxt128_encrypt_vectors[i].ct[j])
+     290:	0007a503          	lw	a0,0(a5)
+     294:	02472603          	lw	a2,36(a4)
+     298:	08c51063          	bne	a0,a2,318 <main+0x2f8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:115 (discriminator 1)
+        for (int j = 0; j < 4; j++){
+     29c:	00158593          	addi	a1,a1,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:115 (discriminator 2)
+     2a0:	00478793          	addi	a5,a5,4
+     2a4:	00470713          	addi	a4,a4,4
+     2a8:	fed594e3          	bne	a1,a3,290 <main+0x270>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:111 (discriminator 1)
+    for (int i = 0; i < NUM_ECBVARTXT128_ENCRYPT_VECTORS; i++) {
+     2ac:	00148493          	addi	s1,s1,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:111 (discriminator 2)
+     2b0:	03440413          	addi	s0,s0,52
+     2b4:	fb249ee3          	bne	s1,s2,270 <main+0x250>
+     2b8:	00001437          	lui	s0,0x1
+     2bc:	3fc40413          	addi	s0,s0,1020 # 13fc <ecbvartxt128_decrypt_vectors>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:122
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    //Test Decryption ECBVARTXT128
+    for (int i = 0; i < NUM_ECBVARTXT128_DECRYPT_VECTORS; i++) {
+     2c0:	00000493          	li	s1,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:122 (discriminator 2)
+     2c4:	08000913          	li	s2,128
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:123
+        aes_128_dec(ecbvartxt128_decrypt_vectors[i].ct,
+     2c8:	00440593          	addi	a1,s0,4
+     2cc:	00010613          	mv	a2,sp
+     2d0:	02440513          	addi	a0,s0,36
+     2d4:	475000ef          	jal	f48 <aes_128_dec>
+     2d8:	00040713          	mv	a4,s0
+     2dc:	00010793          	mv	a5,sp
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:126
+                    ecbvartxt128_decrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+     2e0:	00000593          	li	a1,0
+     2e4:	00400693          	li	a3,4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:127
+            if (computed_data[j] != ecbvartxt128_decrypt_vectors[i].pt[j])
+     2e8:	0007a503          	lw	a0,0(a5)
+     2ec:	01472603          	lw	a2,20(a4)
+     2f0:	02c51463          	bne	a0,a2,318 <main+0x2f8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:126 (discriminator 1)
+        for (int j = 0; j < 4; j++){
+     2f4:	00158593          	addi	a1,a1,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:126 (discriminator 2)
+     2f8:	00478793          	addi	a5,a5,4
+     2fc:	00470713          	addi	a4,a4,4
+     300:	fed594e3          	bne	a1,a3,2e8 <main+0x2c8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:122 (discriminator 1)
+    for (int i = 0; i < NUM_ECBVARTXT128_DECRYPT_VECTORS; i++) {
+     304:	00148493          	addi	s1,s1,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:122 (discriminator 2)
+     308:	03440413          	addi	s0,s0,52
+     30c:	fb249ee3          	bne	s1,s2,2c8 <main+0x2a8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:132
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    test_pass();
+     310:	d09ff0ef          	jal	18 <test_pass>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:82
+        for (int j = 0; j < 4; j++){
+     314:	00000593          	li	a1,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:128
+                test_error(i, j); //TEST failed, jump to fail loop
+     318:	00048513          	mv	a0,s1
+     31c:	cf5ff0ef          	jal	10 <test_error>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:82 (discriminator 1)
+        for (int j = 0; j < 4; j++){
+     320:	00100593          	li	a1,1
+     324:	ff5ff06f          	j	318 <main+0x2f8>
+     328:	00200593          	li	a1,2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:84
+                test_error(i, j); //TEST failed, jump to fail loop
+     32c:	fedff06f          	j	318 <main+0x2f8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:82 (discriminator 1)
+        for (int j = 0; j < 4; j++){
+     330:	00300593          	li	a1,3
+     334:	fe5ff06f          	j	318 <main+0x2f8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/nist_aes_ecb_128.c:95
+                test_error(i, j); //TEST failed, jump to fail loop
+     338:	00090513          	mv	a0,s2
+     33c:	cd5ff0ef          	jal	10 <test_error>
+
+00000340 <key_expansion.constprop.2>:
+key_expansion():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:81 (discriminator 32768)
+
+void key_expansion(const uint32_t *key, uint32_t *w, int Nk) {
+    int Nr = Nk + 6;
+
+    for (int i = 0; i < Nk; i++) {
+        w[i] = key[i];
+     340:	00052783          	lw	a5,0(a0)
+sub_word():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:71
+    return ((uint32_t)sbox[(word >> 24)       ] << 24) |
+     344:	00009837          	lui	a6,0x9
+key_expansion():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:89 (discriminator 2)
+    int round_const_idx = 0;
+    int mod_k = 0;
+    for (int i = Nk; i < 4*(Nr+1); i++) {
+        uint32_t tmp = w[i-1];
+        if (mod_k == 0) {
+            tmp = sub_word(rot_word(tmp)) ^ round_const[round_const_idx++];
+     348:	00009337          	lui	t1,0x9
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:81 (discriminator 32768)
+        w[i] = key[i];
+     34c:	00f5a023          	sw	a5,0(a1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:81 (discriminator 65536)
+     350:	00452783          	lw	a5,4(a0)
+     354:	00058713          	mv	a4,a1
+     358:	0a058893          	addi	a7,a1,160
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:81
+     35c:	00f5a223          	sw	a5,4(a1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:81 (discriminator 98304)
+     360:	00852783          	lw	a5,8(a0)
+sub_word():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:71
+    return ((uint32_t)sbox[(word >> 24)       ] << 24) |
+     364:	85c80813          	addi	a6,a6,-1956 # 885c <sbox>
+key_expansion():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:89 (discriminator 2)
+            tmp = sub_word(rot_word(tmp)) ^ round_const[round_const_idx++];
+     368:	95c30313          	addi	t1,t1,-1700 # 895c <round_const>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:81 (discriminator 98304)
+        w[i] = key[i];
+     36c:	00f5a423          	sw	a5,8(a1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:81
+     370:	00c52783          	lw	a5,12(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:85
+    int mod_k = 0;
+     374:	00000693          	li	a3,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:84
+    int round_const_idx = 0;
+     378:	00000513          	li	a0,0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:81
+        w[i] = key[i];
+     37c:	00f5a623          	sw	a5,12(a1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:96
+            tmp = sub_word(tmp);
+        }
+        w[i] = w[i - Nk] ^ tmp;
+
+        mod_k++;
+        if (mod_k == Nk) mod_k =0;
+     380:	00300e13          	li	t3,3
+     384:	0980006f          	j	41c <key_expansion.constprop.2+0xdc>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:86 (discriminator 2)
+    for (int i = Nk; i < 4*(Nr+1); i++) {
+     388:	00470713          	addi	a4,a4,4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:86
+     38c:	0ae88a63          	beq	a7,a4,440 <key_expansion.constprop.2+0x100>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:87
+        uint32_t tmp = w[i-1];
+     390:	00c72783          	lw	a5,12(a4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:93
+        w[i] = w[i - Nk] ^ tmp;
+     394:	00072f03          	lw	t5,0(a4)
+rot_word():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:67
+    return (word << 8) | (word >> 24);
+     398:	0187d693          	srli	a3,a5,0x18
+     39c:	00879793          	slli	a5,a5,0x8
+     3a0:	00d787b3          	add	a5,a5,a3
+sub_word():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:71
+    return ((uint32_t)sbox[(word >> 24)       ] << 24) |
+     3a4:	0187d693          	srli	a3,a5,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:72
+           ((uint32_t)sbox[(word >> 16) & 0xFF] << 16) |
+     3a8:	0107d613          	srli	a2,a5,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:74
+           ((uint32_t)sbox[ word        & 0xFF]);
+     3ac:	0ff7f593          	zext.b	a1,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:71
+    return ((uint32_t)sbox[(word >> 24)       ] << 24) |
+     3b0:	00d806b3          	add	a3,a6,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:72
+           ((uint32_t)sbox[(word >> 16) & 0xFF] << 16) |
+     3b4:	0ff67613          	zext.b	a2,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:73
+           ((uint32_t)sbox[(word >>  8) & 0xFF] <<  8) |
+     3b8:	0087d793          	srli	a5,a5,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:71
+    return ((uint32_t)sbox[(word >> 24)       ] << 24) |
+     3bc:	0006c683          	lbu	a3,0(a3)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:74
+           ((uint32_t)sbox[ word        & 0xFF]);
+     3c0:	00b805b3          	add	a1,a6,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:72
+           ((uint32_t)sbox[(word >> 16) & 0xFF] << 16) |
+     3c4:	00c80633          	add	a2,a6,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:73
+           ((uint32_t)sbox[(word >>  8) & 0xFF] <<  8) |
+     3c8:	0ff7f793          	zext.b	a5,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:74
+           ((uint32_t)sbox[ word        & 0xFF]);
+     3cc:	0005cf83          	lbu	t6,0(a1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:73
+           ((uint32_t)sbox[(word >>  8) & 0xFF] <<  8) |
+     3d0:	00f807b3          	add	a5,a6,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:72
+           ((uint32_t)sbox[(word >> 16) & 0xFF] << 16) |
+     3d4:	00064583          	lbu	a1,0(a2)
+key_expansion():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:89 (discriminator 2)
+            tmp = sub_word(rot_word(tmp)) ^ round_const[round_const_idx++];
+     3d8:	00251e93          	slli	t4,a0,0x2
+sub_word():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:73
+           ((uint32_t)sbox[(word >>  8) & 0xFF] <<  8) |
+     3dc:	0007c603          	lbu	a2,0(a5)
+key_expansion():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:89 (discriminator 2)
+            tmp = sub_word(rot_word(tmp)) ^ round_const[round_const_idx++];
+     3e0:	01d30eb3          	add	t4,t1,t4
+sub_word():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:71
+    return ((uint32_t)sbox[(word >> 24)       ] << 24) |
+     3e4:	01869793          	slli	a5,a3,0x18
+key_expansion():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:93
+        w[i] = w[i - Nk] ^ tmp;
+     3e8:	000ea683          	lw	a3,0(t4)
+sub_word():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:73
+           ((uint32_t)sbox[(word >>  8) & 0xFF] <<  8) |
+     3ec:	01f7e7b3          	or	a5,a5,t6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:72
+           ((uint32_t)sbox[(word >> 16) & 0xFF] << 16) |
+     3f0:	01059593          	slli	a1,a1,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:73
+           ((uint32_t)sbox[(word >>  8) & 0xFF] <<  8) |
+     3f4:	00b7e7b3          	or	a5,a5,a1
+     3f8:	00861613          	slli	a2,a2,0x8
+key_expansion():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:93
+        w[i] = w[i - Nk] ^ tmp;
+     3fc:	00df46b3          	xor	a3,t5,a3
+sub_word():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:73
+           ((uint32_t)sbox[(word >>  8) & 0xFF] <<  8) |
+     400:	00c7e7b3          	or	a5,a5,a2
+key_expansion():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:93
+        w[i] = w[i - Nk] ^ tmp;
+     404:	00d7c7b3          	xor	a5,a5,a3
+     408:	00f72823          	sw	a5,16(a4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:86 (discriminator 2)
+    for (int i = Nk; i < 4*(Nr+1); i++) {
+     40c:	00470713          	addi	a4,a4,4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:89
+            tmp = sub_word(rot_word(tmp)) ^ round_const[round_const_idx++];
+     410:	00150513          	addi	a0,a0,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:95
+        mod_k++;
+     414:	00100693          	li	a3,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:86 (discriminator 2)
+    for (int i = Nk; i < 4*(Nr+1); i++) {
+     418:	02e88463          	beq	a7,a4,440 <key_expansion.constprop.2+0x100>
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:87
+        uint32_t tmp = w[i-1];
+     41c:	00c72783          	lw	a5,12(a4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:93
+        w[i] = w[i - Nk] ^ tmp;
+     420:	00072f03          	lw	t5,0(a4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:88
+        if (mod_k == 0) {
+     424:	f6068ae3          	beqz	a3,398 <key_expansion.constprop.2+0x58>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:93
+        w[i] = w[i - Nk] ^ tmp;
+     428:	01e7c7b3          	xor	a5,a5,t5
+     42c:	00f72823          	sw	a5,16(a4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:96
+        if (mod_k == Nk) mod_k =0;
+     430:	f5c68ce3          	beq	a3,t3,388 <key_expansion.constprop.2+0x48>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:86 (discriminator 2)
+    for (int i = Nk; i < 4*(Nr+1); i++) {
+     434:	00470713          	addi	a4,a4,4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:95
+        mod_k++;
+     438:	00168693          	addi	a3,a3,1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:86 (discriminator 2)
+    for (int i = Nk; i < 4*(Nr+1); i++) {
+     43c:	fee890e3          	bne	a7,a4,41c <key_expansion.constprop.2+0xdc>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:98
+    }
+}
+     440:	00008067          	ret
+
+00000444 <aes_128_enc>:
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:197
+}
+
+
+//Encrypt Functions
+
+void aes_128_enc(const uint32_t in[4], const uint32_t key[4], uint32_t out[4]) {
+     444:	ee010113          	addi	sp,sp,-288
+     448:	10812c23          	sw	s0,280(sp)
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:197
+     44c:	00050413          	mv	s0,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:199
+    uint32_t w[44];
+    key_expansion(key, w, 4);
+     450:	00058513          	mv	a0,a1
+     454:	03010593          	addi	a1,sp,48
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:197
+void aes_128_enc(const uint32_t in[4], const uint32_t key[4], uint32_t out[4]) {
+     458:	10912a23          	sw	s1,276(sp)
+     45c:	11212823          	sw	s2,272(sp)
+     460:	11312623          	sw	s3,268(sp)
+     464:	11412423          	sw	s4,264(sp)
+     468:	11512223          	sw	s5,260(sp)
+     46c:	11612023          	sw	s6,256(sp)
+     470:	00060a93          	mv	s5,a2
+     474:	0f712e23          	sw	s7,252(sp)
+     478:	0f812c23          	sw	s8,248(sp)
+     47c:	10112e23          	sw	ra,284(sp)
+     480:	0f912a23          	sw	s9,244(sp)
+     484:	0fa12823          	sw	s10,240(sp)
+     488:	0fb12623          	sw	s11,236(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:199
+    key_expansion(key, w, 4);
+     48c:	eb5ff0ef          	jal	340 <key_expansion.constprop.2>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:165 (discriminator 32768)
+        state[0][i] = (uint8_t)(in[i] >> 24);
+     490:	00042883          	lw	a7,0(s0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:165 (discriminator 65536)
+     494:	00442583          	lw	a1,4(s0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:165 (discriminator 98304)
+     498:	00842783          	lw	a5,8(s0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:165
+     49c:	00c42603          	lw	a2,12(s0)
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 262144)
+        uint32_t word = w[(4*round) + c];
+     4a0:	03012f83          	lw	t6,48(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 294912)
+     4a4:	03412e83          	lw	t4,52(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 327680)
+     4a8:	03812f03          	lw	t5,56(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102
+     4ac:	03c12703          	lw	a4,60(sp)
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:165 (discriminator 32768)
+        state[0][i] = (uint8_t)(in[i] >> 24);
+     4b0:	01f8c833          	xor	a6,a7,t6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:166
+        state[1][i] = (uint8_t)(in[i] >> 16);
+     4b4:	01f8cbb3          	xor	s7,a7,t6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:166 (discriminator 65536)
+     4b8:	01d5c533          	xor	a0,a1,t4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:166 (discriminator 98304)
+     4bc:	01e7ce33          	xor	t3,a5,t5
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     4c0:	00c74a33          	xor	s4,a4,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 294912)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     4c4:	00bec8b3          	xor	a7,t4,a1
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:165 (discriminator 98304)
+        state[0][i] = (uint8_t)(in[i] >> 24);
+     4c8:	01e7ceb3          	xor	t4,a5,t5
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     4cc:	00c746b3          	xor	a3,a4,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 294912)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     4d0:	00855313          	srli	t1,a0,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 262144)
+     4d4:	008bd913          	srli	s2,s7,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 327680)
+     4d8:	008e5c13          	srli	s8,t3,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 262144)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     4dc:	010bdb93          	srli	s7,s7,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     4e0:	008a5993          	srli	s3,s4,0x8
+     4e4:	00009637          	lui	a2,0x9
+     4e8:	0ffef393          	zext.b	t2,t4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 294912)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     4ec:	01055513          	srli	a0,a0,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 327680)
+     4f0:	010e5e13          	srli	t3,t3,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+     4f4:	010a5a13          	srli	s4,s4,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 294912)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     4f8:	0ff8f593          	zext.b	a1,a7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 262144)
+     4fc:	0ff87493          	zext.b	s1,a6
+     500:	0ff6f793          	zext.b	a5,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:101 (discriminator 2)
+    for (int c = 0; c < 4; c++) {
+     504:	85c60b13          	addi	s6,a2,-1956 # 885c <sbox>
+     508:	0186df13          	srli	t5,a3,0x18
+     50c:	018edf93          	srli	t6,t4,0x18
+     510:	0ff37613          	zext.b	a2,t1
+     514:	03512623          	sw	s5,44(sp)
+     518:	0ffbf313          	zext.b	t1,s7
+     51c:	03010293          	addi	t0,sp,48
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:101
+     520:	01885b93          	srli	s7,a6,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 262144)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     524:	0ff97913          	zext.b	s2,s2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 294912)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     528:	0ff57513          	zext.b	a0,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     52c:	0ff9f993          	zext.b	s3,s3
+     530:	0ffa7e93          	zext.b	t4,s4
+     534:	00058693          	mv	a3,a1
+     538:	0188d413          	srli	s0,a7,0x18
+     53c:	0ffe7813          	zext.b	a6,t3
+     540:	0ffc7a93          	zext.b	s5,s8
+     544:	00038713          	mv	a4,t2
+sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 32768)
+            state[i][j] = sbox[state[i][j]];
+     548:	017b0e33          	add	t3,s6,s7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 65536)
+     54c:	00ab0c33          	add	s8,s6,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 32768)
+     550:	000e4c83          	lbu	s9,0(t3)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 65536)
+     554:	000c4b83          	lbu	s7,0(s8)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 98304)
+     558:	015b0ab3          	add	s5,s6,s5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 131072)
+     55c:	00fb07b3          	add	a5,s6,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 98304)
+     560:	000ac383          	lbu	t2,0(s5)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 131072)
+     564:	0007cc03          	lbu	s8,0(a5)
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151 (discriminator 32768)
+        uint8_t u = a ^ b ^ c ^ d;
+     568:	019bc5b3          	xor	a1,s7,s9
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     56c:	01859d93          	slli	s11,a1,0x18
+sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 65536)
+            state[i][j] = sbox[state[i][j]];
+     570:	01db0533          	add	a0,s6,t4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 98304)
+     574:	013b0e33          	add	t3,s6,s3
+     578:	00cb0eb3          	add	t4,s6,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 32768)
+     57c:	008b0433          	add	s0,s6,s0
+     580:	01fb0fb3          	add	t6,s6,t6
+     584:	01eb0f33          	add	t5,s6,t5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 65536)
+     588:	006b0ab3          	add	s5,s6,t1
+     58c:	010b0833          	add	a6,s6,a6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 98304)
+     590:	012b0a33          	add	s4,s6,s2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 131072)
+     594:	009b08b3          	add	a7,s6,s1
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 32768)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     598:	418ddd93          	srai	s11,s11,0x18
+sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 131072)
+            state[i][j] = sbox[state[i][j]];
+     59c:	00eb04b3          	add	s1,s6,a4
+     5a0:	00db06b3          	add	a3,s6,a3
+     5a4:	007c49b3          	xor	s3,s8,t2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 32768)
+     5a8:	00044703          	lbu	a4,0(s0)
+     5ac:	000fc783          	lbu	a5,0(t6)
+     5b0:	000f4603          	lbu	a2,0(t5)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 65536)
+     5b4:	000ac903          	lbu	s2,0(s5)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 98304)
+     5b8:	000ec403          	lbu	s0,0(t4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 65536)
+     5bc:	00084a83          	lbu	s5,0(a6)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 98304)
+     5c0:	000e4f83          	lbu	t6,0(t3)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 65536)
+     5c4:	00054803          	lbu	a6,0(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 131072)
+     5c8:	0008cf03          	lbu	t5,0(a7)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 98304)
+     5cc:	000a4503          	lbu	a0,0(s4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 131072)
+     5d0:	0006ce83          	lbu	t4,0(a3)
+     5d4:	0004c483          	lbu	s1,0(s1)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 32768)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     5d8:	001d9e13          	slli	t3,s11,0x1
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151
+        uint8_t u = a ^ b ^ c ^ d;
+     5dc:	00b9c5b3          	xor	a1,s3,a1
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 32768)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     5e0:	000dd463          	bgez	s11,5e8 <aes_128_enc+0x1a4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 32771)
+     5e4:	01be4e13          	xori	t3,t3,27
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 32768)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     5e8:	0173c6b3          	xor	a3,t2,s7
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     5ec:	01869693          	slli	a3,a3,0x18
+     5f0:	4186d693          	srai	a3,a3,0x18
+     5f4:	0195cd33          	xor	s10,a1,s9
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 32768)
+     5f8:	00169313          	slli	t1,a3,0x1
+     5fc:	0006d463          	bgez	a3,604 <aes_128_enc+0x1c0>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 32771)
+     600:	01b34313          	xori	t1,t1,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 32768)
+     604:	01899993          	slli	s3,s3,0x18
+     608:	4189d993          	srai	s3,s3,0x18
+     60c:	0175cbb3          	xor	s7,a1,s7
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 32768)
+     610:	00199693          	slli	a3,s3,0x1
+     614:	0009d463          	bgez	s3,61c <aes_128_enc+0x1d8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 32771)
+     618:	01b6c693          	xori	a3,a3,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156 (discriminator 32768)
+        state[3][i] ^= u ^ xtime(d ^ a);
+     61c:	019c4cb3          	xor	s9,s8,s9
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     620:	018c9c93          	slli	s9,s9,0x18
+     624:	418cdc93          	srai	s9,s9,0x18
+     628:	02d12423          	sw	a3,40(sp)
+     62c:	0075c3b3          	xor	t2,a1,t2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 32768)
+     630:	001c9893          	slli	a7,s9,0x1
+     634:	000cd463          	bgez	s9,63c <aes_128_enc+0x1f8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 32771)
+     638:	01b8c893          	xori	a7,a7,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151 (discriminator 65536)
+        uint8_t u = a ^ b ^ c ^ d;
+     63c:	00eac6b3          	xor	a3,s5,a4
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     640:	01869993          	slli	s3,a3,0x18
+     644:	4189d993          	srai	s3,s3,0x18
+     648:	01ff4a33          	xor	s4,t5,t6
+     64c:	0185c5b3          	xor	a1,a1,s8
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151 (discriminator 65536)
+        uint8_t u = a ^ b ^ c ^ d;
+     650:	00da46b3          	xor	a3,s4,a3
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     654:	00199c13          	slli	s8,s3,0x1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 65536)
+     658:	0009d463          	bgez	s3,660 <aes_128_enc+0x21c>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 65539)
+     65c:	01bc4c13          	xori	s8,s8,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 65536)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     660:	015fc9b3          	xor	s3,t6,s5
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     664:	01899993          	slli	s3,s3,0x18
+     668:	4189d993          	srai	s3,s3,0x18
+     66c:	03812223          	sw	s8,36(sp)
+     670:	00199c93          	slli	s9,s3,0x1
+     674:	00e6cc33          	xor	s8,a3,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 65536)
+     678:	0009d463          	bgez	s3,680 <aes_128_enc+0x23c>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 65539)
+     67c:	01bccc93          	xori	s9,s9,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 65536)
+     680:	018a1a13          	slli	s4,s4,0x18
+     684:	418a5a13          	srai	s4,s4,0x18
+     688:	03912023          	sw	s9,32(sp)
+     68c:	0156cdb3          	xor	s11,a3,s5
+     690:	001a1993          	slli	s3,s4,0x1
+     694:	000a5463          	bgez	s4,69c <aes_128_enc+0x258>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 65539)
+     698:	01b9c993          	xori	s3,s3,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156 (discriminator 65536)
+        state[3][i] ^= u ^ xtime(d ^ a);
+     69c:	00ef4733          	xor	a4,t5,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156
+     6a0:	01f6cfb3          	xor	t6,a3,t6
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     6a4:	01871713          	slli	a4,a4,0x18
+     6a8:	41875713          	srai	a4,a4,0x18
+     6ac:	01f12c23          	sw	t6,24(sp)
+     6b0:	01312e23          	sw	s3,28(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 65536)
+     6b4:	00171f93          	slli	t6,a4,0x1
+     6b8:	00075463          	bgez	a4,6c0 <aes_128_enc+0x27c>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 65539)
+     6bc:	01bfcf93          	xori	t6,t6,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151 (discriminator 98304)
+        uint8_t u = a ^ b ^ c ^ d;
+     6c0:	00f84733          	xor	a4,a6,a5
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     6c4:	01871993          	slli	s3,a4,0x18
+     6c8:	01e6c6b3          	xor	a3,a3,t5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+     6cc:	4189d993          	srai	s3,s3,0x18
+     6d0:	00aecf33          	xor	t5,t4,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+     6d4:	01f12a23          	sw	t6,20(sp)
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151
+        uint8_t u = a ^ b ^ c ^ d;
+     6d8:	00ef4733          	xor	a4,t5,a4
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     6dc:	00199f93          	slli	t6,s3,0x1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+     6e0:	0009d463          	bgez	s3,6e8 <aes_128_enc+0x2a4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98307)
+     6e4:	01bfcf93          	xori	t6,t6,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 98304)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     6e8:	010549b3          	xor	s3,a0,a6
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     6ec:	01899993          	slli	s3,s3,0x18
+     6f0:	4189d993          	srai	s3,s3,0x18
+     6f4:	01f12823          	sw	t6,16(sp)
+     6f8:	00199a13          	slli	s4,s3,0x1
+     6fc:	00f74fb3          	xor	t6,a4,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+     700:	0009d463          	bgez	s3,708 <aes_128_enc+0x2c4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98307)
+     704:	01ba4a13          	xori	s4,s4,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+     708:	018f1f13          	slli	t5,t5,0x18
+     70c:	418f5f13          	srai	t5,t5,0x18
+     710:	01412623          	sw	s4,12(sp)
+     714:	01074833          	xor	a6,a4,a6
+     718:	001f1993          	slli	s3,t5,0x1
+     71c:	000f5463          	bgez	t5,724 <aes_128_enc+0x2e0>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98307)
+     720:	01b9c993          	xori	s3,s3,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156 (discriminator 98304)
+        state[3][i] ^= u ^ xtime(d ^ a);
+     724:	00fec7b3          	xor	a5,t4,a5
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     728:	01879793          	slli	a5,a5,0x18
+     72c:	4187d793          	srai	a5,a5,0x18
+     730:	01312423          	sw	s3,8(sp)
+     734:	00a74533          	xor	a0,a4,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+     738:	00179a93          	slli	s5,a5,0x1
+     73c:	0007d463          	bgez	a5,744 <aes_128_enc+0x300>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98307)
+     740:	01baca93          	xori	s5,s5,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151 (discriminator 131072)
+        uint8_t u = a ^ b ^ c ^ d;
+     744:	00c947b3          	xor	a5,s2,a2
+     748:	01d74733          	xor	a4,a4,t4
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     74c:	01879e93          	slli	t4,a5,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+     750:	418ede93          	srai	t4,t4,0x18
+     754:	0084ccb3          	xor	s9,s1,s0
+     758:	001e9a13          	slli	s4,t4,0x1
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151
+        uint8_t u = a ^ b ^ c ^ d;
+     75c:	00fcc7b3          	xor	a5,s9,a5
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     760:	000ed463          	bgez	t4,768 <aes_128_enc+0x324>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131075)
+     764:	01ba4a13          	xori	s4,s4,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 131072)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     768:	01244eb3          	xor	t4,s0,s2
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     76c:	018e9e93          	slli	t4,t4,0x18
+     770:	418ede93          	srai	t4,t4,0x18
+     774:	00c7cf33          	xor	t5,a5,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+     778:	001e9993          	slli	s3,t4,0x1
+     77c:	000ed463          	bgez	t4,784 <aes_128_enc+0x340>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131075)
+     780:	01b9c993          	xori	s3,s3,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+     784:	018c9c93          	slli	s9,s9,0x18
+     788:	418cdc93          	srai	s9,s9,0x18
+     78c:	0127ceb3          	xor	t4,a5,s2
+     790:	001c9913          	slli	s2,s9,0x1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+     794:	000cd463          	bgez	s9,79c <aes_128_enc+0x358>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131075)
+     798:	01b94913          	xori	s2,s2,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156 (discriminator 131072)
+        state[3][i] ^= u ^ xtime(d ^ a);
+     79c:	00c4c633          	xor	a2,s1,a2
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     7a0:	01861613          	slli	a2,a2,0x18
+     7a4:	41865613          	srai	a2,a2,0x18
+     7a8:	0087c433          	xor	s0,a5,s0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+     7ac:	00161c93          	slli	s9,a2,0x1
+     7b0:	00065463          	bgez	a2,7b8 <aes_128_enc+0x374>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131075)
+     7b4:	01bccc93          	xori	s9,s9,27
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 131072)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     7b8:	0097c7b3          	xor	a5,a5,s1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 32768)
+        uint32_t word = w[(4*round) + c];
+     7bc:	0102a483          	lw	s1,16(t0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 65536)
+     7c0:	0142a603          	lw	a2,20(t0)
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:174 (discriminator 2)
+    for (; round < Nr; round++) {
+     7c4:	01028293          	addi	t0,t0,16
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 32768)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     7c8:	0095c5b3          	xor	a1,a1,s1
+     7cc:	00b8c8b3          	xor	a7,a7,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     7d0:	0184d593          	srli	a1,s1,0x18
+     7d4:	00bd45b3          	xor	a1,s10,a1
+     7d8:	00be4e33          	xor	t3,t3,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     7dc:	0104d593          	srli	a1,s1,0x10
+     7e0:	00bbcbb3          	xor	s7,s7,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 65536)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     7e4:	01812d03          	lw	s10,24(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 98304)
+        uint32_t word = w[(4*round) + c];
+     7e8:	0082a583          	lw	a1,8(t0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 32768)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     7ec:	0084d493          	srli	s1,s1,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+     7f0:	0093c3b3          	xor	t2,t2,s1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     7f4:	01734333          	xor	t1,t1,s7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 131072)
+        uint32_t word = w[(4*round) + c];
+     7f8:	00c2a483          	lw	s1,12(t0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 65536)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     7fc:	01865b93          	srli	s7,a2,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+     800:	017c4c33          	xor	s8,s8,s7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     804:	00c6c6b3          	xor	a3,a3,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     808:	01065b93          	srli	s7,a2,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     80c:	00865613          	srli	a2,a2,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     810:	017dcbb3          	xor	s7,s11,s7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 98304)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     814:	00b74733          	xor	a4,a4,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     818:	0185dd93          	srli	s11,a1,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 65536)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     81c:	00cd4633          	xor	a2,s10,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 98304)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     820:	0105dd13          	srli	s10,a1,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     824:	0085d593          	srli	a1,a1,0x8
+     828:	00b54533          	xor	a0,a0,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 131072)
+     82c:	0084d593          	srli	a1,s1,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+     830:	00b445b3          	xor	a1,s0,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 32768)
+     834:	02812403          	lw	s0,40(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 98304)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     838:	01a84833          	xor	a6,a6,s10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     83c:	01bfcfb3          	xor	t6,t6,s11
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 32768)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     840:	007443b3          	xor	t2,s0,t2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 65536)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     844:	01412403          	lw	s0,20(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 131072)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     848:	0104dd13          	srli	s10,s1,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     84c:	0184dd93          	srli	s11,s1,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     850:	0097c7b3          	xor	a5,a5,s1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 65536)
+     854:	00d446b3          	xor	a3,s0,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     858:	02012483          	lw	s1,32(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     85c:	02412403          	lw	s0,36(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 131072)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     860:	01aeceb3          	xor	t4,t4,s10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     864:	00b945b3          	xor	a1,s2,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 65536)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     868:	01844433          	xor	s0,s0,s8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     86c:	0174cc33          	xor	s8,s1,s7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     870:	01c12483          	lw	s1,28(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 131072)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     874:	01bf4f33          	xor	t5,t5,s11
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 98304)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     878:	00eac733          	xor	a4,s5,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 65536)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     87c:	00c4c633          	xor	a2,s1,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 98304)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     880:	01012483          	lw	s1,16(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 131072)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     884:	01d9ceb3          	xor	t4,s3,t4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     888:	0197c7b3          	xor	a5,a5,s9
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 98304)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     88c:	01f4cfb3          	xor	t6,s1,t6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     890:	00c12483          	lw	s1,12(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 131072)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     894:	01ea4f33          	xor	t5,s4,t5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     898:	0ff5f993          	zext.b	s3,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 98304)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     89c:	0104cd33          	xor	s10,s1,a6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     8a0:	00812803          	lw	a6,8(sp)
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:174 (discriminator 2)
+    for (; round < Nr; round++) {
+     8a4:	0c010593          	addi	a1,sp,192
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 32768)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     8a8:	0ff8f493          	zext.b	s1,a7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 98304)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     8ac:	00a84ab3          	xor	s5,a6,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 32768)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     8b0:	0ffe7b93          	zext.b	s7,t3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 32768)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     8b4:	0ff37313          	zext.b	t1,t1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 32768)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     8b8:	0ff3f913          	zext.b	s2,t2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 65536)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     8bc:	0ff6f693          	zext.b	a3,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     8c0:	0ff47413          	zext.b	s0,s0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 65536)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     8c4:	0ffc7513          	zext.b	a0,s8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 65536)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     8c8:	0ff67613          	zext.b	a2,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 98304)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     8cc:	0ff77713          	zext.b	a4,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     8d0:	0fffff93          	zext.b	t6,t6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 98304)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     8d4:	0ffd7813          	zext.b	a6,s10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 98304)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     8d8:	0ffafa93          	zext.b	s5,s5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 131072)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     8dc:	0ff7f793          	zext.b	a5,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     8e0:	0fff7f13          	zext.b	t5,t5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 131072)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     8e4:	0ffefe93          	zext.b	t4,t4
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:174 (discriminator 2)
+    for (; round < Nr; round++) {
+     8e8:	c65590e3          	bne	a1,t0,548 <aes_128_enc+0x104>
+sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 196608)
+            state[i][j] = sbox[state[i][j]];
+     8ec:	01db0a33          	add	s4,s6,t4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 229376)
+     8f0:	012b0933          	add	s2,s6,s2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 163840)
+     8f4:	01fb0eb3          	add	t4,s6,t6
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 229376)
+        uint32_t word = w[(4*round) + c];
+     8f8:	0d812f83          	lw	t6,216(sp)
+sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 65536)
+            state[i][j] = sbox[state[i][j]];
+     8fc:	00db05b3          	add	a1,s6,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 229376)
+     900:	00070293          	mv	t0,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 163840)
+     904:	01eb06b3          	add	a3,s6,t5
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 229376)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     908:	00094f03          	lbu	t5,0(s2)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     90c:	0005c383          	lbu	t2,0(a1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     910:	000ec903          	lbu	s2,0(t4)
+sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114
+            state[i][j] = sbox[state[i][j]];
+     914:	00078713          	mv	a4,a5
+     918:	013b09b3          	add	s3,s6,s3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 98304)
+     91c:	005b07b3          	add	a5,s6,t0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 196608)
+     920:	010b0e33          	add	t3,s6,a6
+     924:	00ab0533          	add	a0,s6,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 163840)
+     928:	008b08b3          	add	a7,s6,s0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 32768)
+     92c:	009b04b3          	add	s1,s6,s1
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 196608)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     930:	0009c403          	lbu	s0,0(s3)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 229376)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     934:	000a4983          	lbu	s3,0(s4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     938:	0007ca03          	lbu	s4,0(a5)
+sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 131072)
+            state[i][j] = sbox[state[i][j]];
+     93c:	00eb07b3          	add	a5,s6,a4
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 229376)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     940:	008fd713          	srli	a4,t6,0x8
+sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 163840)
+            state[i][j] = sbox[state[i][j]];
+     944:	017b0833          	add	a6,s6,s7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 196608)
+     948:	006b0bb3          	add	s7,s6,t1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 229376)
+     94c:	00cb0333          	add	t1,s6,a2
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 163840)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     950:	00054603          	lbu	a2,0(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 196608)
+     954:	000e4503          	lbu	a0,0(t3)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     958:	0004ce03          	lbu	t3,0(s1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     95c:	0006c483          	lbu	s1,0(a3)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 163840)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     960:	0007c683          	lbu	a3,0(a5)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 229376)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     964:	00ef47b3          	xor	a5,t5,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     968:	018fdf13          	srli	t5,t6,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     96c:	01f3ceb3          	xor	t4,t2,t6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     970:	012f4f33          	xor	t5,t5,s2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     974:	0ff7f793          	zext.b	a5,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 196608)
+        uint32_t word = w[(4*round) + c];
+     978:	0d412903          	lw	s2,212(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102
+     97c:	0dc12703          	lw	a4,220(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 229376)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     980:	0ffefe93          	zext.b	t4,t4
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189 (discriminator 98304)
+                    (uint32_t)(state[2][i] << 8)  |
+     984:	00879793          	slli	a5,a5,0x8
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     988:	000bc283          	lbu	t0,0(s7)
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189 (discriminator 98304)
+                    (uint32_t)(state[2][i] << 8)  |
+     98c:	01d7e7b3          	or	a5,a5,t4
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 229376)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     990:	010fde93          	srli	t4,t6,0x10
+sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114
+            state[i][j] = sbox[state[i][j]];
+     994:	015b0c33          	add	s8,s6,s5
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     998:	00034303          	lbu	t1,0(t1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 163840)
+        uint32_t word = w[(4*round) + c];
+     99c:	0d012b03          	lw	s6,208(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 196608)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     9a0:	012e4e33          	xor	t3,t3,s2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 229376)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     9a4:	013eceb3          	xor	t4,t4,s3
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:187 (discriminator 98304)
+        out[i] = ((uint32_t)(state[0][i] << 24) |
+     9a8:	018f1993          	slli	s3,t5,0x18
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 163840)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     9ac:	000c4583          	lbu	a1,0(s8)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     9b0:	00084803          	lbu	a6,0(a6)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 196608)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     9b4:	0ffe7393          	zext.b	t2,t3
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189 (discriminator 98304)
+                    (uint32_t)(state[2][i] << 8)  |
+     9b8:	0137ee33          	or	t3,a5,s3
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     9bc:	01075793          	srli	a5,a4,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 196608)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     9c0:	0008c883          	lbu	a7,0(a7)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     9c4:	0057c7b3          	xor	a5,a5,t0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     9c8:	00875293          	srli	t0,a4,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 163840)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     9cc:	0166cf33          	xor	t5,a3,s6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     9d0:	0062c2b3          	xor	t0,t0,t1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 163840)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     9d4:	010b5693          	srli	a3,s6,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     9d8:	008b5313          	srli	t1,s6,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     9dc:	018b5993          	srli	s3,s6,0x18
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:187 (discriminator 32768)
+        out[i] = ((uint32_t)(state[0][i] << 24) |
+     9e0:	0109c9b3          	xor	s3,s3,a6
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 163840)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     9e4:	00d646b3          	xor	a3,a2,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     9e8:	0065c833          	xor	a6,a1,t1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     9ec:	0ff7f613          	zext.b	a2,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 196608)
+     9f0:	01095593          	srli	a1,s2,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     9f4:	01895793          	srli	a5,s2,0x18
+     9f8:	0117c7b3          	xor	a5,a5,a7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 196608)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     9fc:	00b54533          	xor	a0,a0,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     a00:	00895913          	srli	s2,s2,0x8
+     a04:	0ff2f293          	zext.b	t0,t0
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:188 (discriminator 32768)
+                    (uint32_t)(state[1][i] << 16) |
+     a08:	0ff6f693          	zext.b	a3,a3
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     a0c:	00ea4a33          	xor	s4,s4,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 196608)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     a10:	012445b3          	xor	a1,s0,s2
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:187 (discriminator 32768)
+        out[i] = ((uint32_t)(state[0][i] << 24) |
+     a14:	01899893          	slli	a7,s3,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:188
+                    (uint32_t)(state[1][i] << 16) |
+     a18:	01061613          	slli	a2,a2,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189
+                    (uint32_t)(state[2][i] << 8)  |
+     a1c:	00829313          	slli	t1,t0,0x8
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     a20:	01875713          	srli	a4,a4,0x18
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:188 (discriminator 32768)
+                    (uint32_t)(state[1][i] << 16) |
+     a24:	01069693          	slli	a3,a3,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189
+                    (uint32_t)(state[2][i] << 8)  |
+     a28:	0ff87813          	zext.b	a6,a6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:187 (discriminator 65536)
+        out[i] = ((uint32_t)(state[0][i] << 24) |
+     a2c:	01879793          	slli	a5,a5,0x18
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 196608)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     a30:	0ff57513          	zext.b	a0,a0
+sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:114 (discriminator 229376)
+            state[i][j] = sbox[state[i][j]];
+     a34:	02c12a83          	lw	s5,44(sp)
+aes_128_enc():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:201
+    aes_cipher(in, w, 10, out);
+}
+     a38:	11812403          	lw	s0,280(sp)
+     a3c:	11c12083          	lw	ra,284(sp)
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     a40:	0ffa7f93          	zext.b	t6,s4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     a44:	00974733          	xor	a4,a4,s1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 229376)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     a48:	0ffefe93          	zext.b	t4,t4
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189
+                    (uint32_t)(state[2][i] << 8)  |
+     a4c:	00666633          	or	a2,a2,t1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189 (discriminator 32768)
+     a50:	0116e6b3          	or	a3,a3,a7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189
+     a54:	00881813          	slli	a6,a6,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189 (discriminator 65536)
+     a58:	0077e7b3          	or	a5,a5,t2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:188
+                    (uint32_t)(state[1][i] << 16) |
+     a5c:	01051513          	slli	a0,a0,0x10
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 196608)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     a60:	0ff5f593          	zext.b	a1,a1
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:187
+        out[i] = ((uint32_t)(state[0][i] << 24) |
+     a64:	01871713          	slli	a4,a4,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:188 (discriminator 98304)
+                    (uint32_t)(state[1][i] << 16) |
+     a68:	010e9e93          	slli	t4,t4,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189
+                    (uint32_t)(state[2][i] << 8)  |
+     a6c:	01f66633          	or	a2,a2,t6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:190 (discriminator 32768)
+                    (uint32_t)(state[3][i]));
+     a70:	0fff7f13          	zext.b	t5,t5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189
+                    (uint32_t)(state[2][i] << 8)  |
+     a74:	0106e6b3          	or	a3,a3,a6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189 (discriminator 65536)
+     a78:	00a7e7b3          	or	a5,a5,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189
+     a7c:	00859593          	slli	a1,a1,0x8
+     a80:	00e66633          	or	a2,a2,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189 (discriminator 98304)
+     a84:	01de6e33          	or	t3,t3,t4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189 (discriminator 32768)
+     a88:	01e6e733          	or	a4,a3,t5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:189 (discriminator 65536)
+     a8c:	00b7e7b3          	or	a5,a5,a1
+aes_128_enc():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:201
+}
+     a90:	11412483          	lw	s1,276(sp)
+     a94:	11012903          	lw	s2,272(sp)
+     a98:	10c12983          	lw	s3,268(sp)
+     a9c:	10812a03          	lw	s4,264(sp)
+aes_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:187 (discriminator 98304)
+        out[i] = ((uint32_t)(state[0][i] << 24) |
+     aa0:	01caa423          	sw	t3,8(s5)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:187
+     aa4:	00caa623          	sw	a2,12(s5)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:187 (discriminator 32768)
+     aa8:	00eaa023          	sw	a4,0(s5)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:187 (discriminator 65536)
+     aac:	00faa223          	sw	a5,4(s5)
+aes_128_enc():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:201
+}
+     ab0:	10412a83          	lw	s5,260(sp)
+     ab4:	10012b03          	lw	s6,256(sp)
+     ab8:	0fc12b83          	lw	s7,252(sp)
+     abc:	0f812c03          	lw	s8,248(sp)
+     ac0:	0f412c83          	lw	s9,244(sp)
+     ac4:	0f012d03          	lw	s10,240(sp)
+     ac8:	0ec12d83          	lw	s11,236(sp)
+     acc:	12010113          	addi	sp,sp,288
+     ad0:	00008067          	ret
+
+00000ad4 <inv_mix_cols>:
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:262
+            state[i][j] = inv_sbox[state[i][j]];
+        }
+    }
+}
+
+void inv_mix_cols(uint8_t state[4][4]) {
+     ad4:	fe010113          	addi	sp,sp,-32
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:264 (discriminator 196608)
+    for (int i = 0; i < 4; i++) {
+        uint8_t a = state[0][i];
+     ad8:	00054803          	lbu	a6,0(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:262
+void inv_mix_cols(uint8_t state[4][4]) {
+     adc:	00812e23          	sw	s0,28(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:266 (discriminator 196608)
+        uint8_t b = state[1][i];
+        uint8_t c = state[2][i];
+     ae0:	00854403          	lbu	s0,8(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:262
+void inv_mix_cols(uint8_t state[4][4]) {
+     ae4:	01212a23          	sw	s2,20(sp)
+     ae8:	00912c23          	sw	s1,24(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:268 (discriminator 196608)
+        uint8_t d = state[3][i];
+        uint8_t u = xtime(xtime(a ^ c));
+     aec:	008847b3          	xor	a5,a6,s0
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     af0:	01879793          	slli	a5,a5,0x18
+     af4:	4187d793          	srai	a5,a5,0x18
+     af8:	00179713          	slli	a4,a5,0x1
+     afc:	01871713          	slli	a4,a4,0x18
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:262
+void inv_mix_cols(uint8_t state[4][4]) {
+     b00:	01312823          	sw	s3,16(sp)
+     b04:	01412623          	sw	s4,12(sp)
+     b08:	01512423          	sw	s5,8(sp)
+     b0c:	01612223          	sw	s6,4(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:265 (discriminator 196608)
+        uint8_t b = state[1][i];
+     b10:	00454883          	lbu	a7,4(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:267 (discriminator 196608)
+        uint8_t d = state[3][i];
+     b14:	00c54903          	lbu	s2,12(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 196608)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     b18:	41875713          	srai	a4,a4,0x18
+     b1c:	0007d463          	bgez	a5,b24 <inv_mix_cols+0x50>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 196611)
+     b20:	01b74713          	xori	a4,a4,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 196608)
+     b24:	00171793          	slli	a5,a4,0x1
+     b28:	00075463          	bgez	a4,b30 <inv_mix_cols+0x5c>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 196611)
+     b2c:	01b7c793          	xori	a5,a5,27
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:269 (discriminator 196608)
+        uint8_t v = xtime(xtime(b ^ d));
+     b30:	0128c6b3          	xor	a3,a7,s2
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     b34:	01869693          	slli	a3,a3,0x18
+     b38:	4186d693          	srai	a3,a3,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 196608)
+     b3c:	00169713          	slli	a4,a3,0x1
+     b40:	01871713          	slli	a4,a4,0x18
+     b44:	41875713          	srai	a4,a4,0x18
+     b48:	0006d463          	bgez	a3,b50 <inv_mix_cols+0x7c>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 196611)
+     b4c:	01b74713          	xori	a4,a4,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 196608)
+     b50:	00171693          	slli	a3,a4,0x1
+     b54:	00075463          	bgez	a4,b5c <inv_mix_cols+0x88>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 196611)
+     b58:	01b6c693          	xori	a3,a3,27
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:264 (discriminator 229376)
+        uint8_t a = state[0][i];
+     b5c:	00154583          	lbu	a1,1(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:266
+        uint8_t c = state[2][i];
+     b60:	00954f83          	lbu	t6,9(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:270 (discriminator 196608)
+        state[0][i] ^= u;
+     b64:	00f84833          	xor	a6,a6,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:272 (discriminator 196608)
+        state[1][i] ^= v;
+        state[2][i] ^= u;
+     b68:	00f44433          	xor	s0,s0,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:268 (discriminator 229376)
+        uint8_t u = xtime(xtime(a ^ c));
+     b6c:	01f5c7b3          	xor	a5,a1,t6
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     b70:	01879793          	slli	a5,a5,0x18
+     b74:	4187d793          	srai	a5,a5,0x18
+     b78:	00179713          	slli	a4,a5,0x1
+     b7c:	01871713          	slli	a4,a4,0x18
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:265
+        uint8_t b = state[1][i];
+     b80:	00554383          	lbu	t2,5(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:267
+        uint8_t d = state[3][i];
+     b84:	00d54483          	lbu	s1,13(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:271 (discriminator 196608)
+        state[1][i] ^= v;
+     b88:	00d8c8b3          	xor	a7,a7,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:273 (discriminator 196608)
+        state[3][i] ^= v;
+     b8c:	00d94933          	xor	s2,s2,a3
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 229376)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     b90:	41875713          	srai	a4,a4,0x18
+     b94:	0007d463          	bgez	a5,b9c <inv_mix_cols+0xc8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 229379)
+     b98:	01b74713          	xori	a4,a4,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 229376)
+     b9c:	00171793          	slli	a5,a4,0x1
+     ba0:	00075463          	bgez	a4,ba8 <inv_mix_cols+0xd4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 229379)
+     ba4:	01b7c793          	xori	a5,a5,27
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:269 (discriminator 229376)
+        uint8_t v = xtime(xtime(b ^ d));
+     ba8:	0093c6b3          	xor	a3,t2,s1
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     bac:	01869693          	slli	a3,a3,0x18
+     bb0:	4186d693          	srai	a3,a3,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 229376)
+     bb4:	00169713          	slli	a4,a3,0x1
+     bb8:	01871713          	slli	a4,a4,0x18
+     bbc:	41875713          	srai	a4,a4,0x18
+     bc0:	0006d463          	bgez	a3,bc8 <inv_mix_cols+0xf4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 229379)
+     bc4:	01b74713          	xori	a4,a4,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 229376)
+     bc8:	00171693          	slli	a3,a4,0x1
+     bcc:	00075463          	bgez	a4,bd4 <inv_mix_cols+0x100>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 229379)
+     bd0:	01b6c693          	xori	a3,a3,27
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:264 (discriminator 262144)
+        uint8_t a = state[0][i];
+     bd4:	00254603          	lbu	a2,2(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:266
+        uint8_t c = state[2][i];
+     bd8:	00a54e83          	lbu	t4,10(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:270 (discriminator 229376)
+        state[0][i] ^= u;
+     bdc:	00f5c5b3          	xor	a1,a1,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:272 (discriminator 229376)
+        state[2][i] ^= u;
+     be0:	00ffcfb3          	xor	t6,t6,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:268 (discriminator 262144)
+        uint8_t u = xtime(xtime(a ^ c));
+     be4:	01d647b3          	xor	a5,a2,t4
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     be8:	01879793          	slli	a5,a5,0x18
+     bec:	4187d793          	srai	a5,a5,0x18
+     bf0:	00179713          	slli	a4,a5,0x1
+     bf4:	01871713          	slli	a4,a4,0x18
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:265
+        uint8_t b = state[1][i];
+     bf8:	00654f03          	lbu	t5,6(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:267
+        uint8_t d = state[3][i];
+     bfc:	00e54283          	lbu	t0,14(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:271 (discriminator 229376)
+        state[1][i] ^= v;
+     c00:	00d3c3b3          	xor	t2,t2,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:273 (discriminator 229376)
+        state[3][i] ^= v;
+     c04:	00d4c4b3          	xor	s1,s1,a3
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 262144)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     c08:	41875713          	srai	a4,a4,0x18
+     c0c:	0007d463          	bgez	a5,c14 <inv_mix_cols+0x140>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 262147)
+     c10:	01b74713          	xori	a4,a4,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 262144)
+     c14:	00171793          	slli	a5,a4,0x1
+     c18:	00075463          	bgez	a4,c20 <inv_mix_cols+0x14c>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 262147)
+     c1c:	01b7c793          	xori	a5,a5,27
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:269 (discriminator 262144)
+        uint8_t v = xtime(xtime(b ^ d));
+     c20:	005f46b3          	xor	a3,t5,t0
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     c24:	01869693          	slli	a3,a3,0x18
+     c28:	4186d693          	srai	a3,a3,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 262144)
+     c2c:	00169713          	slli	a4,a3,0x1
+     c30:	01871713          	slli	a4,a4,0x18
+     c34:	41875713          	srai	a4,a4,0x18
+     c38:	0006d463          	bgez	a3,c40 <inv_mix_cols+0x16c>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 262147)
+     c3c:	01b74713          	xori	a4,a4,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 262144)
+     c40:	00171693          	slli	a3,a4,0x1
+     c44:	00075463          	bgez	a4,c4c <inv_mix_cols+0x178>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 262147)
+     c48:	01b6c693          	xori	a3,a3,27
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:264
+        uint8_t a = state[0][i];
+     c4c:	00354703          	lbu	a4,3(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:266
+        uint8_t c = state[2][i];
+     c50:	00b54983          	lbu	s3,11(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:270 (discriminator 262144)
+        state[0][i] ^= u;
+     c54:	00f64633          	xor	a2,a2,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:272 (discriminator 262144)
+        state[2][i] ^= u;
+     c58:	00feceb3          	xor	t4,t4,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:268
+        uint8_t u = xtime(xtime(a ^ c));
+     c5c:	00e9c7b3          	xor	a5,s3,a4
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     c60:	01879793          	slli	a5,a5,0x18
+     c64:	4187d793          	srai	a5,a5,0x18
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:271 (discriminator 262144)
+        state[1][i] ^= v;
+     c68:	00df4f33          	xor	t5,t5,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:273 (discriminator 262144)
+        state[3][i] ^= v;
+     c6c:	00d2c2b3          	xor	t0,t0,a3
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     c70:	00179693          	slli	a3,a5,0x1
+     c74:	01869693          	slli	a3,a3,0x18
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:265
+        uint8_t b = state[1][i];
+     c78:	00754e03          	lbu	t3,7(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:267
+        uint8_t d = state[3][i];
+     c7c:	00f54a03          	lbu	s4,15(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     c80:	4186d693          	srai	a3,a3,0x18
+     c84:	0007d463          	bgez	a5,c8c <inv_mix_cols+0x1b8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 3)
+     c88:	01b6c693          	xori	a3,a3,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+     c8c:	00169793          	slli	a5,a3,0x1
+     c90:	0006d463          	bgez	a3,c98 <inv_mix_cols+0x1c4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 3)
+     c94:	01b7c793          	xori	a5,a5,27
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:269
+        uint8_t v = xtime(xtime(b ^ d));
+     c98:	01ca4333          	xor	t1,s4,t3
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     c9c:	01831313          	slli	t1,t1,0x18
+     ca0:	41835313          	srai	t1,t1,0x18
+     ca4:	00131693          	slli	a3,t1,0x1
+     ca8:	01869693          	slli	a3,a3,0x18
+     cac:	4186d693          	srai	a3,a3,0x18
+     cb0:	00035463          	bgez	t1,cb8 <inv_mix_cols+0x1e4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 3)
+     cb4:	01b6c693          	xori	a3,a3,27
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+     cb8:	00169313          	slli	t1,a3,0x1
+     cbc:	0006d463          	bgez	a3,cc4 <inv_mix_cols+0x1f0>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 3)
+     cc0:	01b34313          	xori	t1,t1,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151 (discriminator 98304)
+        uint8_t u = a ^ b ^ c ^ d;
+     cc4:	011846b3          	xor	a3,a6,a7
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     cc8:	01869a93          	slli	s5,a3,0x18
+     ccc:	418ada93          	srai	s5,s5,0x18
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:270
+        state[0][i] ^= u;
+     cd0:	00e7c733          	xor	a4,a5,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:272
+        state[2][i] ^= u;
+     cd4:	0137c7b3          	xor	a5,a5,s3
+     cd8:	012449b3          	xor	s3,s0,s2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:271
+        state[1][i] ^= v;
+     cdc:	01c34e33          	xor	t3,t1,t3
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     ce0:	001a9b13          	slli	s6,s5,0x1
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:273
+        state[3][i] ^= v;
+     ce4:	01434333          	xor	t1,t1,s4
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151 (discriminator 98304)
+        uint8_t u = a ^ b ^ c ^ d;
+     ce8:	00d9c6b3          	xor	a3,s3,a3
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     cec:	000ad463          	bgez	s5,cf4 <inv_mix_cols+0x220>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98307)
+     cf0:	01bb4b13          	xori	s6,s6,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 98304)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     cf4:	0088ca33          	xor	s4,a7,s0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:153 (discriminator 98305)
+        state[0][i] ^= u ^ xtime(a ^ b);
+     cf8:	0106cab3          	xor	s5,a3,a6
+     cfc:	016acab3          	xor	s5,s5,s6
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     d00:	018a1a13          	slli	s4,s4,0x18
+     d04:	418a5a13          	srai	s4,s4,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:153 (discriminator 98305)
+        state[0][i] ^= u ^ xtime(a ^ b);
+     d08:	01550023          	sb	s5,0(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     d0c:	001a1a93          	slli	s5,s4,0x1
+     d10:	000a5463          	bgez	s4,d18 <inv_mix_cols+0x244>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98307)
+     d14:	01baca93          	xori	s5,s5,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 98305)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     d18:	0116c8b3          	xor	a7,a3,a7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154
+     d1c:	0158c8b3          	xor	a7,a7,s5
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     d20:	01899993          	slli	s3,s3,0x18
+     d24:	4189d993          	srai	s3,s3,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 98305)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     d28:	01150223          	sb	a7,4(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     d2c:	00199893          	slli	a7,s3,0x1
+     d30:	0009d463          	bgez	s3,d38 <inv_mix_cols+0x264>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98307)
+     d34:	01b8c893          	xori	a7,a7,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156 (discriminator 98304)
+        state[3][i] ^= u ^ xtime(d ^ a);
+     d38:	01284833          	xor	a6,a6,s2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155 (discriminator 98305)
+        state[2][i] ^= u ^ xtime(c ^ d);
+     d3c:	0086c433          	xor	s0,a3,s0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155
+     d40:	01144433          	xor	s0,s0,a7
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     d44:	01881813          	slli	a6,a6,0x18
+     d48:	41885813          	srai	a6,a6,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155 (discriminator 98305)
+        state[2][i] ^= u ^ xtime(c ^ d);
+     d4c:	00850423          	sb	s0,8(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98304)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     d50:	00181893          	slli	a7,a6,0x1
+     d54:	00085463          	bgez	a6,d5c <inv_mix_cols+0x288>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 98307)
+     d58:	01b8c893          	xori	a7,a7,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156 (discriminator 98305)
+        state[3][i] ^= u ^ xtime(d ^ a);
+     d5c:	0126c6b3          	xor	a3,a3,s2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156
+     d60:	0116c6b3          	xor	a3,a3,a7
+     d64:	00d50623          	sb	a3,12(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151 (discriminator 131072)
+        uint8_t u = a ^ b ^ c ^ d;
+     d68:	0075c6b3          	xor	a3,a1,t2
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     d6c:	01869893          	slli	a7,a3,0x18
+     d70:	4188d893          	srai	a7,a7,0x18
+     d74:	009fc833          	xor	a6,t6,s1
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151
+        uint8_t u = a ^ b ^ c ^ d;
+     d78:	0106c6b3          	xor	a3,a3,a6
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     d7c:	00189913          	slli	s2,a7,0x1
+     d80:	0008d463          	bgez	a7,d88 <inv_mix_cols+0x2b4>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131075)
+     d84:	01b94913          	xori	s2,s2,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 131072)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     d88:	01f3c8b3          	xor	a7,t2,t6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:153 (discriminator 131073)
+        state[0][i] ^= u ^ xtime(a ^ b);
+     d8c:	00b6c433          	xor	s0,a3,a1
+     d90:	01244433          	xor	s0,s0,s2
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     d94:	01889893          	slli	a7,a7,0x18
+     d98:	4188d893          	srai	a7,a7,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:153 (discriminator 131073)
+        state[0][i] ^= u ^ xtime(a ^ b);
+     d9c:	008500a3          	sb	s0,1(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     da0:	00189413          	slli	s0,a7,0x1
+     da4:	0008d463          	bgez	a7,dac <inv_mix_cols+0x2d8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131075)
+     da8:	01b44413          	xori	s0,s0,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 131073)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     dac:	0076c3b3          	xor	t2,a3,t2
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     db0:	01881813          	slli	a6,a6,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 131073)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     db4:	0083c3b3          	xor	t2,t2,s0
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     db8:	41885813          	srai	a6,a6,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 131073)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     dbc:	007502a3          	sb	t2,5(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     dc0:	00181893          	slli	a7,a6,0x1
+     dc4:	00085463          	bgez	a6,dcc <inv_mix_cols+0x2f8>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131075)
+     dc8:	01b8c893          	xori	a7,a7,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156 (discriminator 131072)
+        state[3][i] ^= u ^ xtime(d ^ a);
+     dcc:	0095c5b3          	xor	a1,a1,s1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155 (discriminator 131073)
+        state[2][i] ^= u ^ xtime(c ^ d);
+     dd0:	01f6cfb3          	xor	t6,a3,t6
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     dd4:	01859593          	slli	a1,a1,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155 (discriminator 131073)
+        state[2][i] ^= u ^ xtime(c ^ d);
+     dd8:	011fcfb3          	xor	t6,t6,a7
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     ddc:	4185d593          	srai	a1,a1,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155 (discriminator 131073)
+        state[2][i] ^= u ^ xtime(c ^ d);
+     de0:	01f504a3          	sb	t6,9(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131072)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     de4:	00159813          	slli	a6,a1,0x1
+     de8:	0005d463          	bgez	a1,df0 <inv_mix_cols+0x31c>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 131075)
+     dec:	01b84813          	xori	a6,a6,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156 (discriminator 131073)
+        state[3][i] ^= u ^ xtime(d ^ a);
+     df0:	0096c6b3          	xor	a3,a3,s1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156
+     df4:	0106c6b3          	xor	a3,a3,a6
+     df8:	00d506a3          	sb	a3,13(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151 (discriminator 163840)
+        uint8_t u = a ^ b ^ c ^ d;
+     dfc:	01e646b3          	xor	a3,a2,t5
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     e00:	01869813          	slli	a6,a3,0x18
+     e04:	41885813          	srai	a6,a6,0x18
+     e08:	005ec5b3          	xor	a1,t4,t0
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151
+        uint8_t u = a ^ b ^ c ^ d;
+     e0c:	00b6c6b3          	xor	a3,a3,a1
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163840)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     e10:	00181f93          	slli	t6,a6,0x1
+     e14:	00085463          	bgez	a6,e1c <inv_mix_cols+0x348>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163843)
+     e18:	01bfcf93          	xori	t6,t6,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 163840)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     e1c:	01df4833          	xor	a6,t5,t4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:153 (discriminator 163841)
+        state[0][i] ^= u ^ xtime(a ^ b);
+     e20:	00c6c8b3          	xor	a7,a3,a2
+     e24:	01f8c8b3          	xor	a7,a7,t6
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163840)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     e28:	01881813          	slli	a6,a6,0x18
+     e2c:	41885813          	srai	a6,a6,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:153 (discriminator 163841)
+        state[0][i] ^= u ^ xtime(a ^ b);
+     e30:	01150123          	sb	a7,2(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163840)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     e34:	00181893          	slli	a7,a6,0x1
+     e38:	00085463          	bgez	a6,e40 <inv_mix_cols+0x36c>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163843)
+     e3c:	01b8c893          	xori	a7,a7,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 163841)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     e40:	01e6cf33          	xor	t5,a3,t5
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163840)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     e44:	01859593          	slli	a1,a1,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 163841)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     e48:	011f4f33          	xor	t5,t5,a7
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163840)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     e4c:	4185d593          	srai	a1,a1,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 163841)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     e50:	01e50323          	sb	t5,6(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163840)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     e54:	00159813          	slli	a6,a1,0x1
+     e58:	0005d463          	bgez	a1,e60 <inv_mix_cols+0x38c>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163843)
+     e5c:	01b84813          	xori	a6,a6,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156 (discriminator 163840)
+        state[3][i] ^= u ^ xtime(d ^ a);
+     e60:	00564633          	xor	a2,a2,t0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155 (discriminator 163841)
+        state[2][i] ^= u ^ xtime(c ^ d);
+     e64:	01d6ceb3          	xor	t4,a3,t4
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163840)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     e68:	01861613          	slli	a2,a2,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155 (discriminator 163841)
+        state[2][i] ^= u ^ xtime(c ^ d);
+     e6c:	010eceb3          	xor	t4,t4,a6
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163840)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     e70:	41865613          	srai	a2,a2,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155 (discriminator 163841)
+        state[2][i] ^= u ^ xtime(c ^ d);
+     e74:	01d50523          	sb	t4,10(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163840)
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     e78:	00161593          	slli	a1,a2,0x1
+     e7c:	00065463          	bgez	a2,e84 <inv_mix_cols+0x3b0>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 163843)
+     e80:	01b5c593          	xori	a1,a1,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156 (discriminator 163841)
+        state[3][i] ^= u ^ xtime(d ^ a);
+     e84:	0056c6b3          	xor	a3,a3,t0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156
+     e88:	00b6c6b3          	xor	a3,a3,a1
+     e8c:	00d50723          	sb	a3,14(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151
+        uint8_t u = a ^ b ^ c ^ d;
+     e90:	00ee46b3          	xor	a3,t3,a4
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     e94:	01869593          	slli	a1,a3,0x18
+     e98:	4185d593          	srai	a1,a1,0x18
+     e9c:	0067c633          	xor	a2,a5,t1
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:151
+        uint8_t u = a ^ b ^ c ^ d;
+     ea0:	00d646b3          	xor	a3,a2,a3
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     ea4:	00159893          	slli	a7,a1,0x1
+     ea8:	0005d463          	bgez	a1,eb0 <inv_mix_cols+0x3dc>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 3)
+     eac:	01b8c893          	xori	a7,a7,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154
+        state[1][i] ^= u ^ xtime(b ^ c);
+     eb0:	00fe45b3          	xor	a1,t3,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:153 (discriminator 1)
+        state[0][i] ^= u ^ xtime(a ^ b);
+     eb4:	00d74833          	xor	a6,a4,a3
+     eb8:	01184833          	xor	a6,a6,a7
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     ebc:	01859593          	slli	a1,a1,0x18
+     ec0:	4185d593          	srai	a1,a1,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:153 (discriminator 1)
+        state[0][i] ^= u ^ xtime(a ^ b);
+     ec4:	010501a3          	sb	a6,3(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     ec8:	00159813          	slli	a6,a1,0x1
+     ecc:	0005d463          	bgez	a1,ed4 <inv_mix_cols+0x400>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 3)
+     ed0:	01b84813          	xori	a6,a6,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 1)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     ed4:	00de4e33          	xor	t3,t3,a3
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     ed8:	01861613          	slli	a2,a2,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 1)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     edc:	010e4e33          	xor	t3,t3,a6
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     ee0:	41865613          	srai	a2,a2,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:154 (discriminator 1)
+        state[1][i] ^= u ^ xtime(b ^ c);
+     ee4:	01c503a3          	sb	t3,7(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     ee8:	00161593          	slli	a1,a2,0x1
+     eec:	00065463          	bgez	a2,ef4 <inv_mix_cols+0x420>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 3)
+     ef0:	01b5c593          	xori	a1,a1,27
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156
+        state[3][i] ^= u ^ xtime(d ^ a);
+     ef4:	00e34733          	xor	a4,t1,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155 (discriminator 1)
+        state[2][i] ^= u ^ xtime(c ^ d);
+     ef8:	00d7c7b3          	xor	a5,a5,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155
+     efc:	00b7c7b3          	xor	a5,a5,a1
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     f00:	01871713          	slli	a4,a4,0x18
+     f04:	41875713          	srai	a4,a4,0x18
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:155 (discriminator 1)
+        state[2][i] ^= u ^ xtime(c ^ d);
+     f08:	00f505a3          	sb	a5,11(a0)
+xtime():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142
+    return (uint8_t)((x << 1) ^ ((x & 0x80) ? 0x1b : 0x00));
+     f0c:	00171793          	slli	a5,a4,0x1
+     f10:	00075463          	bgez	a4,f18 <inv_mix_cols+0x444>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:142 (discriminator 3)
+     f14:	01b7c793          	xori	a5,a5,27
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:276
+    }
+    mix_cols(state);
+}
+     f18:	01c12403          	lw	s0,28(sp)
+mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156 (discriminator 1)
+        state[3][i] ^= u ^ xtime(d ^ a);
+     f1c:	00d34333          	xor	t1,t1,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:156
+     f20:	00f34333          	xor	t1,t1,a5
+     f24:	006507a3          	sb	t1,15(a0)
+inv_mix_cols():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:276
+}
+     f28:	01812483          	lw	s1,24(sp)
+     f2c:	01412903          	lw	s2,20(sp)
+     f30:	01012983          	lw	s3,16(sp)
+     f34:	00c12a03          	lw	s4,12(sp)
+     f38:	00812a83          	lw	s5,8(sp)
+     f3c:	00412b03          	lw	s6,4(sp)
+     f40:	02010113          	addi	sp,sp,32
+     f44:	00008067          	ret
+
+00000f48 <aes_128_dec>:
+aes_128_dec():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:312
+    }
+}
+
+//Decrypt Functions
+
+void aes_128_dec(const uint32_t in[4], const uint32_t key[4], uint32_t out[4]) {
+     f48:	f1010113          	addi	sp,sp,-240
+     f4c:	0d312e23          	sw	s3,220(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:314
+    uint32_t w[44];
+    key_expansion(key, w, 4);
+     f50:	01010993          	addi	s3,sp,16
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:312
+void aes_128_dec(const uint32_t in[4], const uint32_t key[4], uint32_t out[4]) {
+     f54:	0e812423          	sw	s0,232(sp)
+     f58:	00050413          	mv	s0,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:314
+    key_expansion(key, w, 4);
+     f5c:	00058513          	mv	a0,a1
+     f60:	00098593          	mv	a1,s3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:312
+void aes_128_dec(const uint32_t in[4], const uint32_t key[4], uint32_t out[4]) {
+     f64:	0e912223          	sw	s1,228(sp)
+     f68:	0f212023          	sw	s2,224(sp)
+     f6c:	0e112623          	sw	ra,236(sp)
+     f70:	00060913          	mv	s2,a2
+     f74:	0d412c23          	sw	s4,216(sp)
+     f78:	0d512a23          	sw	s5,212(sp)
+     f7c:	0d612823          	sw	s6,208(sp)
+     f80:	0d712623          	sw	s7,204(sp)
+     f84:	0d812423          	sw	s8,200(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:314
+    key_expansion(key, w, 4);
+     f88:	bb8ff0ef          	jal	340 <key_expansion.constprop.2>
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:283 (discriminator 32768)
+        state[0][i] = (uint8_t)(in[i] >> 24);
+     f8c:	00042583          	lw	a1,0(s0)
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 262144)
+        uint32_t word = w[(4*round) + c];
+     f90:	0b012503          	lw	a0,176(sp)
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:283 (discriminator 98304)
+        state[0][i] = (uint8_t)(in[i] >> 24);
+     f94:	00842883          	lw	a7,8(s0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:283 (discriminator 65536)
+     f98:	00442683          	lw	a3,4(s0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:283
+     f9c:	00c42783          	lw	a5,12(s0)
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 327680)
+        uint32_t word = w[(4*round) + c];
+     fa0:	0b812703          	lw	a4,184(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102
+     fa4:	0bc12803          	lw	a6,188(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 294912)
+     fa8:	0b412603          	lw	a2,180(sp)
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:283 (discriminator 32768)
+        state[0][i] = (uint8_t)(in[i] >> 24);
+     fac:	00a5ceb3          	xor	t4,a1,a0
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 262144)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     fb0:	010ede13          	srli	t3,t4,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     fb4:	008ed313          	srli	t1,t4,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     fb8:	018ede93          	srli	t4,t4,0x18
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:283 (discriminator 65536)
+        state[0][i] = (uint8_t)(in[i] >> 24);
+     fbc:	00c6c2b3          	xor	t0,a3,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:285
+        state[2][i] = (uint8_t)(in[i] >> 8);
+     fc0:	00c6cf33          	xor	t5,a3,a2
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 262144)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     fc4:	00b54533          	xor	a0,a0,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 294912)
+     fc8:	00d64633          	xor	a2,a2,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     fcc:	00f845b3          	xor	a1,a6,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     fd0:	00f846b3          	xor	a3,a6,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 262144)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     fd4:	01d10023          	sb	t4,0(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 262144)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     fd8:	01c10223          	sb	t3,4(sp)
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:283 (discriminator 98304)
+        state[0][i] = (uint8_t)(in[i] >> 24);
+     fdc:	00e8ceb3          	xor	t4,a7,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:284
+        state[1][i] = (uint8_t)(in[i] >> 16);
+     fe0:	00e8ce33          	xor	t3,a7,a4
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 262144)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     fe4:	00610423          	sb	t1,8(sp)
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:285 (discriminator 98304)
+        state[2][i] = (uint8_t)(in[i] >> 8);
+     fe8:	00e8c333          	xor	t1,a7,a4
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 327680)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+     fec:	01174733          	xor	a4,a4,a7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     ff0:	00f848b3          	xor	a7,a6,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 294912)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+     ff4:	0102df93          	srli	t6,t0,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+     ff8:	008f5f13          	srli	t5,t5,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 294912)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+     ffc:	0182d293          	srli	t0,t0,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 327680)
+    1000:	018ede93          	srli	t4,t4,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1004:	010e5e13          	srli	t3,t3,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1008:	00835313          	srli	t1,t1,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    100c:	0188d893          	srli	a7,a7,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1010:	0105d593          	srli	a1,a1,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1014:	0086d693          	srli	a3,a3,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    1018:	0107c7b3          	xor	a5,a5,a6
+    101c:	00008437          	lui	s0,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 262144)
+    1020:	00a10623          	sb	a0,12(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 294912)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    1024:	005100a3          	sb	t0,1(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 294912)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1028:	01f102a3          	sb	t6,5(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 294912)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    102c:	01e104a3          	sb	t5,9(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 294912)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    1030:	00c106a3          	sb	a2,13(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 327680)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    1034:	01d10123          	sb	t4,2(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 327680)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1038:	01c10323          	sb	t3,6(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 327680)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    103c:	00610523          	sb	t1,10(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 327680)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    1040:	00e10723          	sb	a4,14(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    1044:	011101a3          	sb	a7,3(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1048:	00b103a3          	sb	a1,7(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    104c:	00d105a3          	sb	a3,11(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    1050:	00f107a3          	sb	a5,15(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:101 (discriminator 2)
+    for (int c = 0; c < 4; c++) {
+    1054:	0a010493          	addi	s1,sp,160
+    1058:	75c40413          	addi	s0,s0,1884 # 875c <inv_sbox>
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 98304)
+            state[i][j] = inv_sbox[state[i][j]];
+    105c:	00b14e03          	lbu	t3,11(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 131072)
+    1060:	00d14883          	lbu	a7,13(sp)
+    1064:	00c14703          	lbu	a4,12(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 32768)
+    1068:	00114283          	lbu	t0,1(sp)
+    106c:	00214e83          	lbu	t4,2(sp)
+    1070:	00314803          	lbu	a6,3(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 65536)
+    1074:	00714a03          	lbu	s4,7(sp)
+    1078:	00414383          	lbu	t2,4(sp)
+    107c:	00514f83          	lbu	t6,5(sp)
+    1080:	00614503          	lbu	a0,6(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 98304)
+    1084:	00a14f03          	lbu	t5,10(sp)
+    1088:	00814303          	lbu	t1,8(sp)
+    108c:	00914583          	lbu	a1,9(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 131072)
+    1090:	00e14603          	lbu	a2,14(sp)
+    1094:	00f14683          	lbu	a3,15(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 32768)
+    1098:	00014783          	lbu	a5,0(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 98304)
+    109c:	01c40e33          	add	t3,s0,t3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 131072)
+    10a0:	011408b3          	add	a7,s0,a7
+    10a4:	00e40733          	add	a4,s0,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 98304)
+    10a8:	000e4b83          	lbu	s7,0(t3)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 65536)
+    10ac:	007403b3          	add	t2,s0,t2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 131072)
+    10b0:	0008ce03          	lbu	t3,0(a7)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 65536)
+    10b4:	01f40fb3          	add	t6,s0,t6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 131072)
+    10b8:	00074883          	lbu	a7,0(a4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 98304)
+    10bc:	01e40f33          	add	t5,s0,t5
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 32768)
+        uint32_t word = w[(4*round) + c];
+    10c0:	0004a703          	lw	a4,0(s1)
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 131072)
+            state[i][j] = inv_sbox[state[i][j]];
+    10c4:	00c40633          	add	a2,s0,a2
+    10c8:	00d406b3          	add	a3,s0,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 32768)
+    10cc:	00f407b3          	add	a5,s0,a5
+    10d0:	005402b3          	add	t0,s0,t0
+    10d4:	01d40eb3          	add	t4,s0,t4
+    10d8:	01040833          	add	a6,s0,a6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 65536)
+    10dc:	01440a33          	add	s4,s0,s4
+    10e0:	00a40533          	add	a0,s0,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 98304)
+    10e4:	00640333          	add	t1,s0,t1
+    10e8:	00b405b3          	add	a1,s0,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 32768)
+    10ec:	00084803          	lbu	a6,0(a6)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 65536)
+    10f0:	0003ca83          	lbu	s5,0(t2)
+    10f4:	00054503          	lbu	a0,0(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 98304)
+    10f8:	000f4b03          	lbu	s6,0(t5)
+    10fc:	0005c583          	lbu	a1,0(a1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 131072)
+    1100:	00064383          	lbu	t2,0(a2)
+    1104:	0006cf03          	lbu	t5,0(a3)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 32768)
+    1108:	0002c283          	lbu	t0,0(t0)
+    110c:	000ece83          	lbu	t4,0(t4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 65536)
+    1110:	000a4a03          	lbu	s4,0(s4)
+    1114:	000fcc03          	lbu	s8,0(t6)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 98304)
+    1118:	00034303          	lbu	t1,0(t1)
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 32768)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    111c:	0007cf83          	lbu	t6,0(a5)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 65536)
+        uint32_t word = w[(4*round) + c];
+    1120:	0044a683          	lw	a3,4(s1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 32768)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    1124:	00ee4e33          	xor	t3,t3,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 98304)
+        uint32_t word = w[(4*round) + c];
+    1128:	0084a603          	lw	a2,8(s1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 32768)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    112c:	01c10623          	sb	t3,12(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 65536)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    1130:	0186de13          	srli	t3,a3,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 131072)
+        uint32_t word = w[(4*round) + c];
+    1134:	00c4a783          	lw	a5,12(s1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 65536)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    1138:	01c2c2b3          	xor	t0,t0,t3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 32768)
+    113c:	01875e13          	srli	t3,a4,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+    1140:	01cfcfb3          	xor	t6,t6,t3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1144:	01075e13          	srli	t3,a4,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1148:	00875713          	srli	a4,a4,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 65536)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    114c:	00d3c3b3          	xor	t2,t2,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 32768)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1150:	01ca4a33          	xor	s4,s4,t3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1154:	00eb4b33          	xor	s6,s6,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 65536)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1158:	0106de13          	srli	t3,a3,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 98304)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    115c:	01865713          	srli	a4,a2,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 65536)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1160:	0086d693          	srli	a3,a3,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 98304)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    1164:	00cf4f33          	xor	t5,t5,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 131072)
+    1168:	00f8c8b3          	xor	a7,a7,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 98304)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    116c:	00eeceb3          	xor	t4,t4,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 65536)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1170:	01cacab3          	xor	s5,s5,t3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1174:	00dbcbb3          	xor	s7,s7,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 98304)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1178:	01065e13          	srli	t3,a2,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 131072)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    117c:	0187d693          	srli	a3,a5,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 98304)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1180:	00865613          	srli	a2,a2,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 131072)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1184:	0107d713          	srli	a4,a5,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1188:	0087d793          	srli	a5,a5,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    118c:	00e54733          	xor	a4,a0,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 98304)
+    1190:	01cc4e33          	xor	t3,s8,t3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1194:	00c34333          	xor	t1,t1,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 131072)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    1198:	00d846b3          	xor	a3,a6,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    119c:	00f5c7b3          	xor	a5,a1,a5
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:294
+        inv_mix_cols(state);
+    11a0:	00010513          	mv	a0,sp
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:290 (discriminator 2)
+    for (int round = Nr - 1; round > 0; round--) {
+    11a4:	ff048493          	addi	s1,s1,-16
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 65536)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    11a8:	007106a3          	sb	t2,13(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    11ac:	005100a3          	sb	t0,1(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 32768)
+    11b0:	01f10023          	sb	t6,0(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 32768)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    11b4:	01410223          	sb	s4,4(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 32768)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    11b8:	01610423          	sb	s6,8(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 65536)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    11bc:	015102a3          	sb	s5,5(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 65536)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    11c0:	017104a3          	sb	s7,9(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 98304)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    11c4:	01e10723          	sb	t5,14(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    11c8:	01d10123          	sb	t4,2(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 98304)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    11cc:	01c10323          	sb	t3,6(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 98304)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    11d0:	00610523          	sb	t1,10(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 131072)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    11d4:	011107a3          	sb	a7,15(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    11d8:	00d101a3          	sb	a3,3(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 131072)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    11dc:	00e103a3          	sb	a4,7(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 131072)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    11e0:	00f105a3          	sb	a5,11(sp)
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:294
+        inv_mix_cols(state);
+    11e4:	8f1ff0ef          	jal	ad4 <inv_mix_cols>
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:290 (discriminator 2)
+    for (int round = Nr - 1; round > 0; round--) {
+    11e8:	e6999ae3          	bne	s3,s1,105c <aes_128_dec+0x114>
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 163840)
+            state[i][j] = inv_sbox[state[i][j]];
+    11ec:	00114883          	lbu	a7,1(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 196608)
+    11f0:	00414783          	lbu	a5,4(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 65536)
+    11f4:	00e14303          	lbu	t1,14(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 163840)
+    11f8:	00214283          	lbu	t0,2(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 98304)
+    11fc:	00f14f03          	lbu	t5,15(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 131072)
+    1200:	00c14e03          	lbu	t3,12(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 163840)
+    1204:	011408b3          	add	a7,s0,a7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 229376)
+    1208:	00b14583          	lbu	a1,11(sp)
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 196608)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    120c:	0008cf83          	lbu	t6,0(a7)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102
+        uint32_t word = w[(4*round) + c];
+    1210:	01412883          	lw	a7,20(sp)
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257
+            state[i][j] = inv_sbox[state[i][j]];
+    1214:	00f407b3          	add	a5,s0,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 163840)
+    1218:	005402b3          	add	t0,s0,t0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 98304)
+    121c:	01e40f33          	add	t5,s0,t5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 131072)
+    1220:	01c40e33          	add	t3,s0,t3
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 196608)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1224:	0007c783          	lbu	a5,0(a5)
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 65536)
+            state[i][j] = inv_sbox[state[i][j]];
+    1228:	00640333          	add	t1,s0,t1
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 229376)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    122c:	0002c383          	lbu	t2,0(t0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 196608)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    1230:	00034303          	lbu	t1,0(t1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 229376)
+    1234:	000f4283          	lbu	t0,0(t5)
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257
+            state[i][j] = inv_sbox[state[i][j]];
+    1238:	00b405b3          	add	a1,s0,a1
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    123c:	000e4f03          	lbu	t5,0(t3)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 196608)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    1240:	0188de13          	srli	t3,a7,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1244:	0005c583          	lbu	a1,0(a1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    1248:	01cfcfb3          	xor	t6,t6,t3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    124c:	0108de13          	srli	t3,a7,0x10
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257
+            state[i][j] = inv_sbox[state[i][j]];
+    1250:	00514683          	lbu	a3,5(sp)
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1254:	01c7c7b3          	xor	a5,a5,t3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    1258:	01134333          	xor	t1,t1,a7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    125c:	0ff7f793          	zext.b	a5,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1260:	0088d893          	srli	a7,a7,0x8
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 229376)
+            state[i][j] = inv_sbox[state[i][j]];
+    1264:	00814803          	lbu	a6,8(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 163840)
+    1268:	00314703          	lbu	a4,3(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 196608)
+    126c:	00614e83          	lbu	t4,6(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 229376)
+    1270:	00914503          	lbu	a0,9(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 163840)
+    1274:	00014603          	lbu	a2,0(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 196608)
+    1278:	00714e03          	lbu	t3,7(sp)
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:303 (discriminator 65536)
+        out[i] = (((uint32_t)state[0][i] << 24) |
+    127c:	018f9f93          	slli	t6,t6,0x18
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 196608)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1280:	0115c5b3          	xor	a1,a1,a7
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:304 (discriminator 65536)
+                  ((uint32_t)state[1][i] << 16) |
+    1284:	01079793          	slli	a5,a5,0x10
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 229376)
+        uint32_t word = w[(4*round) + c];
+    1288:	01812483          	lw	s1,24(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 196608)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    128c:	0ff37893          	zext.b	a7,t1
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257
+            state[i][j] = inv_sbox[state[i][j]];
+    1290:	00d406b3          	add	a3,s0,a3
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305 (discriminator 65536)
+                  ((uint32_t)state[2][i] << 8)  |
+    1294:	01f7e7b3          	or	a5,a5,t6
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 196608)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1298:	0ff5f593          	zext.b	a1,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 229376)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    129c:	0006c683          	lbu	a3,0(a3)
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305 (discriminator 65536)
+                  ((uint32_t)state[2][i] << 8)  |
+    12a0:	0117e7b3          	or	a5,a5,a7
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305
+    12a4:	00859593          	slli	a1,a1,0x8
+    12a8:	00b7e7b3          	or	a5,a5,a1
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 229376)
+            state[i][j] = inv_sbox[state[i][j]];
+    12ac:	01040833          	add	a6,s0,a6
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 163840)
+    12b0:	00e40733          	add	a4,s0,a4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 196608)
+    12b4:	01d40eb3          	add	t4,s0,t4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 229376)
+    12b8:	00a40533          	add	a0,s0,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 163840)
+    12bc:	00c40633          	add	a2,s0,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 196608)
+    12c0:	01c40e33          	add	t3,s0,t3
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102 (discriminator 163840)
+        uint32_t word = w[(4*round) + c];
+    12c4:	01012f83          	lw	t6,16(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 163840)
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    12c8:	00064603          	lbu	a2,0(a2)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 229376)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    12cc:	0092c333          	xor	t1,t0,s1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    12d0:	00084803          	lbu	a6,0(a6)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:102
+        uint32_t word = w[(4*round) + c];
+    12d4:	01c12283          	lw	t0,28(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    12d8:	00074703          	lbu	a4,0(a4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    12dc:	000ece83          	lbu	t4,0(t4)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    12e0:	00054503          	lbu	a0,0(a0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 163840)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    12e4:	000e4e03          	lbu	t3,0(t3)
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 32768)
+            state[i][j] = inv_sbox[state[i][j]];
+    12e8:	00d14583          	lbu	a1,13(sp)
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:303 (discriminator 65536)
+        out[i] = (((uint32_t)state[0][i] << 24) |
+    12ec:	00f92223          	sw	a5,4(s2)
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 229376)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    12f0:	0104d793          	srli	a5,s1,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+    12f4:	00f6c6b3          	xor	a3,a3,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    12f8:	0184d793          	srli	a5,s1,0x18
+    12fc:	00f3c3b3          	xor	t2,t2,a5
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 229376)
+            state[i][j] = inv_sbox[state[i][j]];
+    1300:	00a14783          	lbu	a5,10(sp)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 32768)
+    1304:	00b405b3          	add	a1,s0,a1
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    1308:	005f48b3          	xor	a7,t5,t0
+inv_sub_bytes():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:257 (discriminator 229376)
+            state[i][j] = inv_sbox[state[i][j]];
+    130c:	00f40433          	add	s0,s0,a5
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1310:	0102d793          	srli	a5,t0,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 163840)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    1314:	0005cf03          	lbu	t5,0(a1)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1318:	00feceb3          	xor	t4,t4,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 163840)
+    131c:	010fd793          	srli	a5,t6,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1320:	00044583          	lbu	a1,0(s0)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1324:	00fe4e33          	xor	t3,t3,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103
+        state[0][c] = state[0][c] ^ (uint8_t)(word >> 24);
+    1328:	0182d793          	srli	a5,t0,0x18
+    132c:	00f74733          	xor	a4,a4,a5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:103 (discriminator 163840)
+    1330:	018fd793          	srli	a5,t6,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 229376)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1334:	0084d493          	srli	s1,s1,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 163840)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    1338:	01ff4f33          	xor	t5,t5,t6
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:303 (discriminator 32768)
+        out[i] = (((uint32_t)state[0][i] << 24) |
+    133c:	00f647b3          	xor	a5,a2,a5
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104 (discriminator 229376)
+        state[1][c] = state[1][c] ^ (uint8_t)(word >> 16);
+    1340:	0ff6f693          	zext.b	a3,a3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:104
+    1344:	0ffefe93          	zext.b	t4,t4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1348:	0082d293          	srli	t0,t0,0x8
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:304 (discriminator 32768)
+                  ((uint32_t)state[1][i] << 16) |
+    134c:	0ffe7e13          	zext.b	t3,t3
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 163840)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1350:	008fdf93          	srli	t6,t6,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 229376)
+    1354:	00984833          	xor	a6,a6,s1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+    1358:	00554533          	xor	a0,a0,t0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 163840)
+    135c:	01f5c633          	xor	a2,a1,t6
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:304 (discriminator 98304)
+                  ((uint32_t)state[1][i] << 16) |
+    1360:	01069693          	slli	a3,a3,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:303
+        out[i] = (((uint32_t)state[0][i] << 24) |
+    1364:	01839393          	slli	t2,t2,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:304
+                  ((uint32_t)state[1][i] << 16) |
+    1368:	010e9e93          	slli	t4,t4,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:303
+        out[i] = (((uint32_t)state[0][i] << 24) |
+    136c:	01871713          	slli	a4,a4,0x18
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:304 (discriminator 32768)
+                  ((uint32_t)state[1][i] << 16) |
+    1370:	010e1e13          	slli	t3,t3,0x10
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:303
+        out[i] = (((uint32_t)state[0][i] << 24) |
+    1374:	01879793          	slli	a5,a5,0x18
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    1378:	0ff57593          	zext.b	a1,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106 (discriminator 229376)
+        state[3][c] = state[3][c] ^ (uint8_t)(word);
+    137c:	0ff37313          	zext.b	t1,t1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:106
+    1380:	0ff8f893          	zext.b	a7,a7
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:306 (discriminator 32768)
+                  ((uint32_t)state[3][i]));
+    1384:	0fff7f13          	zext.b	t5,t5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305 (discriminator 98304)
+                  ((uint32_t)state[2][i] << 8)  |
+    1388:	0076e6b3          	or	a3,a3,t2
+add_round_key():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:105 (discriminator 229376)
+        state[2][c] = state[2][c] ^ (uint8_t)(word >> 8);
+    138c:	0ff87813          	zext.b	a6,a6
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305
+                  ((uint32_t)state[2][i] << 8)  |
+    1390:	01d76733          	or	a4,a4,t4
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305 (discriminator 32768)
+    1394:	01c7e7b3          	or	a5,a5,t3
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305
+    1398:	0ff67613          	zext.b	a2,a2
+aes_128_dec():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:316
+    aes_inv_cipher(in, w, 10, out);
+}
+    139c:	0ec12083          	lw	ra,236(sp)
+    13a0:	0e812403          	lw	s0,232(sp)
+aes_inv_cipher():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305 (discriminator 98304)
+                  ((uint32_t)state[2][i] << 8)  |
+    13a4:	0066e6b3          	or	a3,a3,t1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305
+    13a8:	00881513          	slli	a0,a6,0x8
+    13ac:	01176733          	or	a4,a4,a7
+    13b0:	00859593          	slli	a1,a1,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305 (discriminator 32768)
+    13b4:	01e7e7b3          	or	a5,a5,t5
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305
+    13b8:	00861613          	slli	a2,a2,0x8
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305 (discriminator 98304)
+    13bc:	00a6e6b3          	or	a3,a3,a0
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305
+    13c0:	00b76733          	or	a4,a4,a1
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:305 (discriminator 32768)
+    13c4:	00c7e7b3          	or	a5,a5,a2
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:303 (discriminator 98304)
+        out[i] = (((uint32_t)state[0][i] << 24) |
+    13c8:	00d92423          	sw	a3,8(s2)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:303
+    13cc:	00e92623          	sw	a4,12(s2)
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:303 (discriminator 32768)
+    13d0:	00f92023          	sw	a5,0(s2)
+aes_128_dec():
+/home/ryken/Documents/EE5300/OTTER_5stage/benchmark/AES/nist_ecb_128/../aes.c:316
+}
+    13d4:	0e412483          	lw	s1,228(sp)
+    13d8:	0e012903          	lw	s2,224(sp)
+    13dc:	0dc12983          	lw	s3,220(sp)
+    13e0:	0d812a03          	lw	s4,216(sp)
+    13e4:	0d412a83          	lw	s5,212(sp)
+    13e8:	0d012b03          	lw	s6,208(sp)
+    13ec:	0cc12b83          	lw	s7,204(sp)
+    13f0:	0c812c03          	lw	s8,200(sp)
+    13f4:	0f010113          	addi	sp,sp,240
+    13f8:	00008067          	ret

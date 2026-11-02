@@ -3,7 +3,7 @@
 # defaults
 SIM ?= verilator
 TOPLEVEL_LANG ?= verilog
-EXTRA_ARGS = -Wno-fatal --trace-fst --trace-structs
+EXTRA_ARGS = -Wno-fatal --trace-structs
 
 VERILOG_SOURCES += $(PWD)/../src/*.sv
 

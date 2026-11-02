@@ -65,6 +65,8 @@
     logic [13:0] wordAddr2;
     logic [31:0] memReadWord, ioBuffer, memReadSized;
     logic [31:0] memAddr2Buffer;
+    logic [1:0] memSizeBuffer;
+    logic memSignBuffer;
     logic [1:0] byteOffset;
     logic weAddrValid;      // active when saving (WE) to valid memory address
        
@@ -72,7 +74,7 @@
     (* ram_decomp = "power" *) logic [31:0] memory [0:16383];
     
     initial begin
-        $readmemh("/home/ryken/Documents/EE5300/OTTER_5stage/mem/test_all.mem", memory);
+        $readmemh("/home/ryken/Documents/EE5300/OTTER_5stage/mem/current_test.mem", memory);
     end
     
 
@@ -89,6 +91,8 @@
       if(MEM_RDEN2) begin
         ioBuffer <= IO_IN;
         memAddr2Buffer <= MEM_ADDR2;
+        memSizeBuffer <= MEM_SIZE;
+        memSignBuffer <= MEM_SIGN;
       end
     end
     
@@ -127,7 +131,7 @@
        
     // Change the data word into sized bytes and sign extend
     always_comb begin
-      case({MEM_SIGN,MEM_SIZE,byteOffset})
+      case({memSignBuffer,memSizeBuffer,memAddr2Buffer[1:0]})
         5'b00011: memReadSized = {{24{memReadWord[31]}},memReadWord[31:24]};  // signed byte
         5'b00010: memReadSized = {{24{memReadWord[23]}},memReadWord[23:16]};
         5'b00001: memReadSized = {{24{memReadWord[15]}},memReadWord[15:8]};
@@ -137,7 +141,8 @@
         5'b00101: memReadSized = {{16{memReadWord[23]}},memReadWord[23:8]};
         5'b00100: memReadSized = {{16{memReadWord[15]}},memReadWord[15:0]};
             
-        5'b01000: memReadSized = memReadWord;                   // word
+        5'b01000,
+        5'b11000: memReadSized = memReadWord;                   // word
                
         5'b10011: memReadSized = {24'd0,memReadWord[31:24]};    // unsigned byte
         5'b10010: memReadSized = {24'd0,memReadWord[23:16]};
@@ -155,13 +160,18 @@
     // Memory Mapped IO
     always_comb begin
       if(memAddr2Buffer >= 32'h00010000) begin  // external address range
-        IO_WR = MEM_WE2;                 // IO Write
         MEM_DOUT2 = ioBuffer;            // IO read from buffer
+      end
+      else begin
+        MEM_DOUT2 = memReadSized;   // output sized and sign extended data
+      end
+
+      if(MEM_ADDR2 >= 32'h00010000) begin
+        IO_WR = MEM_WE2;                 // IO Write
         weAddrValid = 0;                 // address beyond memory range
       end
       else begin
         IO_WR = 0;                  // not MMIO
-        MEM_DOUT2 = memReadSized;   // output sized and sign extended data
         weAddrValid = MEM_WE2;      // address in valid memory range
       end
     end

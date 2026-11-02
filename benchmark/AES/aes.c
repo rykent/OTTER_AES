@@ -82,14 +82,18 @@ void key_expansion(const uint32_t *key, uint32_t *w, int Nk) {
     }
 
     int round_const_idx = 0;
+    int mod_k = 0;
     for (int i = Nk; i < 4*(Nr+1); i++) {
         uint32_t tmp = w[i-1];
-        if ((i % Nk) == 0) {
+        if (mod_k == 0) {
             tmp = sub_word(rot_word(tmp)) ^ round_const[round_const_idx++];
-        } else if ((Nk > 6) && ((i % Nk) == 4)) {
+        } else if ((Nk > 6) && (mod_k == 4)) {
             tmp = sub_word(tmp);
         }
         w[i] = w[i - Nk] ^ tmp;
+
+        mod_k++;
+        if (mod_k == Nk) mod_k =0;
     }
 }
 
@@ -208,6 +212,22 @@ void aes_256_enc(const uint32_t in[4], const uint32_t key[8], uint32_t out[4]) {
     aes_cipher(in, w, 14, out);
 }
 
+// void aes_128_enc_cbc(const uint32_t *pt, uint32_t *ct, int num_blocks, const uint32_t key[4], const uint32_t iv[4]) {
+//     uint32_t feedback[4];
+//     for (int i = 0; i < 4; i++) feedback[i] = iv[i];
+
+//     for (int b = 0; b < num_blocks; b++) {
+//         uint32_t block_in[4];
+//         for (int j = 0; j < 4; j++) {
+//             block_in[j] = pt[b*4 +j] ^ feedback[j];
+//         }
+
+//         aes_128_enc(block_in, key, &ct[b*4]);
+
+//         for (int j = 0; j < 4; j++) feedback[j] = ct[b*4 + j];
+//     }
+// }
+
 //Inverse Cipher support functions
 
 void inv_shift_rows(uint8_t state[4][4]) {
@@ -266,7 +286,7 @@ void aes_inv_cipher(const uint32_t in[4], uint32_t *w, int Nr, uint32_t out[4]) 
         state[3][i] = (uint8_t)(in[i]);
     }
 
-    add_round_key(state, w, round);
+    add_round_key(state, w, Nr);
     for (int round = Nr - 1; round > 0; round--) {
         inv_shift_rows(state);
         inv_sub_bytes(state);
@@ -276,14 +296,14 @@ void aes_inv_cipher(const uint32_t in[4], uint32_t *w, int Nr, uint32_t out[4]) 
 
     inv_shift_rows(state);
     inv_sub_bytes(state);
-    add_round_key(state, w, round);
+    add_round_key(state, w, 0);
 
     //Copy state to out
     for (int i = 0; i < 4; i++) {
-        out[i] = ((uint32_t)(state[0][i] << 24) |
-                    (uint32_t)(state[1][i] << 16) |
-                    (uint32_t)(state[2][i] << 8)  |
-                    (uint32_t)(state[3][i]));
+        out[i] = (((uint32_t)state[0][i] << 24) |
+                  ((uint32_t)state[1][i] << 16) |
+                  ((uint32_t)state[2][i] << 8)  |
+                  ((uint32_t)state[3][i]));
     }
 }
 

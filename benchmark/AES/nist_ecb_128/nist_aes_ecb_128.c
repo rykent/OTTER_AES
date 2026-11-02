@@ -12,12 +12,13 @@
 // #define MODE_RV32I_ZNKE_ZKND
 
 //Include AES functions
-#include "aes.h"
+#include "../aes.h"
 
 //Include test data, to be stored in rodata
-#include "ecbgfsbox128.h"
-#include "ecbkeysbox128.h"
-#include "ecbvartxt128.h"
+#include "../headers/ecbgfsbox128.h"
+#include "../headers/ecbkeysbox128.h"
+#include "../headers/ecbvarkey128.h"
+#include "../headers/ecbvartxt128.h"
 
 //Test PASS and ERROR helpers:
 __attribute__((noinline, noreturn))
@@ -80,6 +81,28 @@ void main() {
                     computed_data);
         for (int j = 0; j < 4; j++){
             if (computed_data[j] != ecbkeysbox128_decrypt_vectors[i].pt[j])
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    //Test Encryption ECBVARKEY128
+    for (int i = 0; i < NUM_ECBVARKEY128_ENCRYPT_VECTORS; i++) {
+        aes_128_enc(ecbvarkey128_encrypt_vectors[i].pt,
+                    ecbvarkey128_encrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+            if (computed_data[j] != ecbvarkey128_encrypt_vectors[i].ct[j])
+                test_error(i, j); //TEST failed, jump to fail loop
+        }
+    }
+
+    //Test Decryption ECBVARKEY128
+    for (int i = 0; i < NUM_ECBVARKEY128_DECRYPT_VECTORS; i++) {
+        aes_128_dec(ecbvarkey128_decrypt_vectors[i].ct,
+                    ecbvarkey128_decrypt_vectors[i].key,
+                    computed_data);
+        for (int j = 0; j < 4; j++){
+            if (computed_data[j] != ecbvarkey128_decrypt_vectors[i].pt[j])
                 test_error(i, j); //TEST failed, jump to fail loop
         }
     }
