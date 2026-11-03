@@ -21,7 +21,7 @@
 module CU_DCDR(
     input [6:0] opcode,
     input [2:0] funct3,
-    input funct7,
+    input [6:0] funct7,
     output logic [3:0] alu_fun,
     output logic [1:0] alu_srcA,
     output logic [1:0] alu_srcB,
@@ -33,6 +33,9 @@ module CU_DCDR(
     output logic mret_exec,
     output logic memRead1
     );
+
+    logic [4:0] funct5;
+    assign funct5 = funct7[4:0];
     
     always_comb begin
         alu_fun = 0;
@@ -53,8 +56,17 @@ module CU_DCDR(
                 rf_wr_sel = 3;
                 regWrite = 1;
 
-                //Funct3 corresponds to alu_fun kinda epic
-                alu_fun = {funct7, funct3};
+
+                // Check funct5 for AES instructions
+                if (funct5[0] == 1'b1) begin
+                    alu_fun = //XOR;
+                    // ALU SRCB == AES
+                end
+                else begin
+                    //Funct3 corresponds to alu_fun kinda epic
+                    alu_fun = {funct7[5], funct3};
+                end
+
             end
             7'b0010011: begin //I-TYPE arithmetic ops
                 //Artihmetic ops so write alu result to reg file
@@ -62,7 +74,7 @@ module CU_DCDR(
                 regWrite = 1;
 
                 alu_srcB = 1; //I-TYPE immediate
-                if (funct3 == 3'b101) alu_fun = {funct7, funct3};
+                if (funct3 == 3'b101) alu_fun = {funct7[5], funct3};
                 else alu_fun = {1'b0, funct3};
             end
             7'b1100111: begin //I-TYPE jalr
