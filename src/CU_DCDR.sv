@@ -33,16 +33,12 @@ module CU_DCDR(
     output logic mret_exec,
     output logic memRead1
     );
-
-    logic [4:0] funct5;
-    assign funct5 = funct7[4:0];
     
     always_comb begin
         alu_fun = 0;
         alu_srcA = 0;
         alu_srcB = 0;
         rf_wr_sel = 0;
-
         regWrite = 0;
         memWrite = 0;
         csr_WE = 0;
@@ -58,9 +54,8 @@ module CU_DCDR(
 
 
                 // Check funct5 for AES instructions
-                if (funct5[0] == 1'b1) begin
-                    alu_fun = //XOR;
-                    // ALU SRCB == AES
+                if (funct7[0] == 1'b1) begin
+                    alu_fun = (funct7[2] ? 4'd11 : 4'd10);
                 end
                 else begin
                     //Funct3 corresponds to alu_fun kinda epic

@@ -230,7 +230,7 @@ module OTTER_MCU(
         .alu_fun  (alu_fun_w),
         .opcode   (instr_w[6:0]),
         .funct3   (instr_w[14:12]),
-        .funct7   (instr_w[30]),
+        .funct7   (instr_w[31:25]),
         .memRead2 (memRead2_w),
         .memWrite (memWrite_w),
         .regWrite (regWrite_w),
@@ -397,6 +397,8 @@ module OTTER_MCU(
         .srcA   (alu_srcA_data_w),
         .srcB   (alu_srcB_data_w),
         .ALU_FUN(ID_EX_r.alu_fun),
+        .bs     (ID_EX_r.instr[31:30]),
+        .aes_func(~ID_EX_r.instr[26]),
         .RESULT (alu_res_w)
     );
 

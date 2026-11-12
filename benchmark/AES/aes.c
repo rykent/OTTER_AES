@@ -11,10 +11,28 @@
 #include "aes.h"
 
 //Only one of these should be defined at a time
-#define MODE_RV32I
-// #define MODE_RV32I_ZNKE_ZKND
+// #define MODE_RV32I
+#define MODE_RV32I_ZNKE_ZKND
 // #define MODE_RV32I_AES_CP
 
+#ifdef MODE_RV32I_ZNKE_ZKND
+#include <riscv_crypto.h>
+
+static inline uint32_t bswap32(uint32_t x) {
+    return (x << 24) |
+           ((x << 8)  & 0x00FF0000) |
+           ((x >> 8)  & 0x0000FF00) |
+           (x >> 24);
+}
+
+static const uint32_t round_const_le[10] = {
+    0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36
+};
+
+static inline uint32_t rot_word_le(uint32_t word) {
+    return (word >> 8) | (word << 24);
+}
+#endif
 
 //AES round constants
 static const uint32_t round_const[10] = {
@@ -67,13 +85,23 @@ static inline uint32_t rot_word(uint32_t word) {
     return (word << 8) | (word >> 24);
 }
 
+#ifdef MODE_RV32I
 static inline uint32_t sub_word(uint32_t word) {
     return ((uint32_t)sbox[(word >> 24)       ] << 24) |
            ((uint32_t)sbox[(word >> 16) & 0xFF] << 16) |
            ((uint32_t)sbox[(word >>  8) & 0xFF] <<  8) |
            ((uint32_t)sbox[ word        & 0xFF]);
 }
+#elifdef MODE_RV32I_ZNKE_ZKND
+static inline uint32_t sub_word(uint32_t word) {
+    uint32_t res = __riscv_aes32esi(0,   word, 0);
+    res          = __riscv_aes32esi(res, word, 1);
+    res          = __riscv_aes32esi(res, word, 2);
+    return         __riscv_aes32esi(res, word, 3);
+}
+#endif
 
+#ifdef MODE_RV32I
 void key_expansion(const uint32_t *key, uint32_t *w, int Nk) {
     int Nr = Nk + 6;
 
@@ -96,6 +124,30 @@ void key_expansion(const uint32_t *key, uint32_t *w, int Nk) {
         if (mod_k == Nk) mod_k =0;
     }
 }
+#elifdef MODE_RV32I_ZNKE_ZKND
+void key_expansion(const uint32_t *key, uint32_t *w, int Nk) {
+    int Nr = Nk + 6;
+
+    for (int i = 0; i < Nk; i++) {
+        w[i] = bswap32(key[i]);
+    }
+
+    int round_const_idx = 0;
+    int mod_k = 0;
+    for (int i = Nk; i < 4*(Nr+1); i++) {
+        uint32_t tmp = w[i-1];
+        if (mod_k == 0) {
+            tmp = sub_word(rot_word_le(tmp)) ^ round_const_le[round_const_idx++];
+        } else if ((Nk > 6) && (mod_k == 4)) {
+            tmp = sub_word(tmp);
+        }
+        w[i] = w[i - Nk] ^ tmp;
+
+        mod_k++;
+        if (mod_k == Nk) mod_k = 0;
+    }
+}
+#endif
 
 static inline void add_round_key(uint8_t state[4][4], uint32_t *w, int round) {
     for (int c = 0; c < 4; c++) {
@@ -157,6 +209,7 @@ static inline void mix_cols(uint8_t state[4][4]) {
     }
 }
 
+#ifdef MODE_RV32I
 void aes_cipher(const uint32_t in[4], uint32_t *w, int Nr, uint32_t out[4]) {
     uint8_t state[4][4];
 
@@ -190,6 +243,65 @@ void aes_cipher(const uint32_t in[4], uint32_t *w, int Nr, uint32_t out[4]) {
                     (uint32_t)(state[3][i]));
     }
 }
+#elifdef MODE_RV32I_ZNKE_ZKND
+void aes_cipher(const uint32_t in[4], uint32_t *w, int Nr, uint32_t out[4]) {
+    uint32_t s0 = bswap32(in[0]) ^ w[0];
+    uint32_t s1 = bswap32(in[1]) ^ w[1];
+    uint32_t s2 = bswap32(in[2]) ^ w[2];
+    uint32_t s3 = bswap32(in[3]) ^ w[3];
+    w+= 4;
+
+    //Middle Round encryption
+    for (int round = 1; round < Nr; round++) {
+        uint32_t c0 = __riscv_aes32esmi(0, s0, 0);
+        c0 = __riscv_aes32esmi(c0, s1, 1);
+        c0 = __riscv_aes32esmi(c0, s2, 2);
+        c0 = __riscv_aes32esmi(c0, s3, 3) ^ w[0];
+
+        uint32_t c1 = __riscv_aes32esmi(0, s1, 0);
+        c1 = __riscv_aes32esmi(c1, s2, 1);
+        c1 = __riscv_aes32esmi(c1, s3, 2);
+        c1 = __riscv_aes32esmi(c1, s0, 3) ^ w[1];
+
+        uint32_t c2 = __riscv_aes32esmi(0, s2, 0);
+        c2 = __riscv_aes32esmi(c2, s3, 1);
+        c2 = __riscv_aes32esmi(c2, s0, 2);
+        c2 = __riscv_aes32esmi(c2, s1, 3) ^ w[2];
+
+        uint32_t c3 = __riscv_aes32esmi(0, s3, 0);
+        c3 = __riscv_aes32esmi(c3, s0, 1);
+        c3 = __riscv_aes32esmi(c3, s1, 2);
+        c3 = __riscv_aes32esmi(c3, s2, 3) ^ w[3];
+
+        s0 = c0;
+        s1 = c1;
+        s2 = c2;
+        s3 = c3;
+        w += 4;
+    }
+
+    //Final Round encryption
+    uint32_t c0 = __riscv_aes32esi(0, s0, 0);
+    c0 = __riscv_aes32esi(c0, s1, 1);
+    c0 = __riscv_aes32esi(c0, s2, 2);
+    out[0] = bswap32(__riscv_aes32esi(c0, s3, 3) ^ w[0]);
+
+    uint32_t c1 = __riscv_aes32esi(0, s1, 0);
+    c1 = __riscv_aes32esi(c1, s2, 1);
+    c1 = __riscv_aes32esi(c1, s3, 2);
+    out[1] = bswap32(__riscv_aes32esi(c1, s0, 3) ^ w[1]);
+
+    uint32_t c2 = __riscv_aes32esi(0, s2, 0);
+    c2 = __riscv_aes32esi(c2, s3, 1);
+    c2 = __riscv_aes32esi(c2, s0, 2);
+    out[2] = bswap32(__riscv_aes32esi(c2, s1, 3) ^ w[2]);
+
+    uint32_t c3 = __riscv_aes32esi(0, s3, 0);
+    c3 = __riscv_aes32esi(c3, s0, 1);
+    c3 = __riscv_aes32esi(c3, s1, 2);
+    out[3] = bswap32(__riscv_aes32esi(c3, s2, 3) ^ w[3]);
+}
+#endif
 
 
 //Encrypt Functions
@@ -275,6 +387,7 @@ void inv_mix_cols(uint8_t state[4][4]) {
     mix_cols(state);
 }
 
+#ifdef MODE_RV32I
 void aes_inv_cipher(const uint32_t in[4], uint32_t *w, int Nr, uint32_t out[4]) {
     uint8_t state[4][4];
 
@@ -306,6 +419,82 @@ void aes_inv_cipher(const uint32_t in[4], uint32_t *w, int Nr, uint32_t out[4]) 
                   ((uint32_t)state[3][i]));
     }
 }
+#elifdef MODE_RV32I_ZNKE_ZKND
+static inline uint32_t inv_mix_col_word(uint32_t word) {
+    uint32_t t = __riscv_aes32esi(0, word, 0);
+    t = __riscv_aes32esi(t, word, 1);
+    t = __riscv_aes32esi(t, word, 2);
+    t = __riscv_aes32esi(t, word, 3);
+    uint32_t dw = __riscv_aes32dsmi(0, t, 0);
+    dw = __riscv_aes32dsmi(dw, t, 1);
+    dw = __riscv_aes32dsmi(dw, t, 2);
+    return __riscv_aes32dsmi(dw, t, 3);
+}
+
+void aes_inv_cipher(const uint32_t in[4], uint32_t *w, int Nr, uint32_t out[4]) {
+    for (int i = 4; i < 4 * Nr; i++) {
+        w[i] = inv_mix_col_word(w[i]);
+    }
+
+    const uint32_t *rk = w + 4 * Nr;
+    uint32_t s0 = bswap32(in[0]) ^ rk[0];
+    uint32_t s1 = bswap32(in[1]) ^ rk[1];
+    uint32_t s2 = bswap32(in[2]) ^ rk[2];
+    uint32_t s3 = bswap32(in[3]) ^ rk[3];
+    rk -= 4;
+
+    //Middle Round decryption
+    for (int round = 1; round < Nr; round++) {
+        uint32_t c0 = __riscv_aes32dsmi(0, s0, 0);
+        c0 = __riscv_aes32dsmi(c0, s3, 1);
+        c0 = __riscv_aes32dsmi(c0, s2, 2);
+        c0 = __riscv_aes32dsmi(c0, s1, 3) ^ rk[0];
+
+        uint32_t c1 = __riscv_aes32dsmi(0, s1, 0);
+        c1 = __riscv_aes32dsmi(c1, s0, 1);
+        c1 = __riscv_aes32dsmi(c1, s3, 2);
+        c1 = __riscv_aes32dsmi(c1, s2, 3) ^ rk[1];
+
+        uint32_t c2 = __riscv_aes32dsmi(0, s2, 0);
+        c2 = __riscv_aes32dsmi(c2, s1, 1);
+        c2 = __riscv_aes32dsmi(c2, s0, 2);
+        c2 = __riscv_aes32dsmi(c2, s3, 3) ^ rk[2];
+
+        uint32_t c3 = __riscv_aes32dsmi(0, s3, 0);
+        c3 = __riscv_aes32dsmi(c3, s2, 1);
+        c3 = __riscv_aes32dsmi(c3, s1, 2);
+        c3 = __riscv_aes32dsmi(c3, s0, 3) ^ rk[3];
+
+        s0 = c0;
+        s1 = c1;
+        s2 = c2;
+        s3 = c3;
+        rk -= 4;
+    }
+
+    //Final Round decryption
+    uint32_t c0 = __riscv_aes32dsi(0, s0, 0);
+    c0 = __riscv_aes32dsi(c0, s3, 1);
+    c0 = __riscv_aes32dsi(c0, s2, 2);
+    out[0] = bswap32(__riscv_aes32dsi(c0, s1, 3) ^ rk[0]);
+
+    uint32_t c1 = __riscv_aes32dsi(0, s1, 0);
+    c1 = __riscv_aes32dsi(c1, s0, 1);
+    c1 = __riscv_aes32dsi(c1, s3, 2);
+    out[1] = bswap32(__riscv_aes32dsi(c1, s2, 3) ^ rk[1]);
+
+    uint32_t c2 = __riscv_aes32dsi(0, s2, 0);
+    c2 = __riscv_aes32dsi(c2, s1, 1);
+    c2 = __riscv_aes32dsi(c2, s0, 2);
+    out[2] = bswap32(__riscv_aes32dsi(c2, s3, 3) ^ rk[2]);
+
+    uint32_t c3 = __riscv_aes32dsi(0, s3, 0);
+    c3 = __riscv_aes32dsi(c3, s2, 1);
+    c3 = __riscv_aes32dsi(c3, s1, 2);
+    out[3] = bswap32(__riscv_aes32dsi(c3, s0, 3) ^ rk[3]);
+}
+#endif
+
 
 //Decrypt Functions
 

@@ -53,12 +53,21 @@ async def basic_count(dut):
             
         elif current_pc == PC_ERROR and PC_ERROR != 0:
             # Look at a0 (x10) and a1 (x11) for vector index and word index
-            failed_vec = int(dut.CPU.rf[10].value) if hasattr(dut.CPU, 'rf') else -1
-            failed_word = int(dut.CPU.rf[11].value) if hasattr(dut.CPU, 'rf') else -1
+            try:
+                failed_vec = int(dut.CPU.OTTER_RF.ram[10].value)
+                failed_word = int(dut.CPU.OTTER_RF.ram[11].value)
+                a4_computed = int(dut.CPU.OTTER_RF.ram[14].value)
+                a5_expected = int(dut.CPU.OTTER_RF.ram[15].value)
+            except Exception as e:
+                failed_vec = -1
+                failed_word = -1
+                a4_computed = -1
+                a5_expected = -1
             
             dut._log.error("======================================================")
             dut._log.error(f"  STATUS: TEST FAILED! Reached Error PC: 0x{PC_ERROR:x}")
             dut._log.error(f"  Failed at NIST vector: {failed_vec}, Word: {failed_word}")
+            dut._log.error(f"  Computed: 0x{a4_computed:08x}, Expected: 0x{a5_expected:08x}")
             dut._log.error(f"  Cycles before failure: {cycles}")
             dut._log.error("======================================================")
             assert False, f"AES Test failed on vector {failed_vec}!"

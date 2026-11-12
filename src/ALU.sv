@@ -109,7 +109,8 @@ module ALU(
     logic [7:0] so_x2;
     assign so_x2 = {so[6:0], 1'b0} ^ (so[7] ? 8'h1b : 8'h00);
 
-    logic [31:0] mix_col = {so_x2 ^ so, so, so, so_x2};
+    logic [31:0] mix_col;
+    assign mix_col = {so_x2 ^ so, so, so, so_x2};
     logic [31:0] esmi_res;
 
     always_comb begin
@@ -122,7 +123,7 @@ module ALU(
         endcase
     end
 
-    assign esi_res = so << {bs, 3'b000};
+    assign esi_res = {24'b0, so} << {bs, 3'b000};
 
     //
     // AES Decrypt Zknd
@@ -205,7 +206,7 @@ module ALU(
     end
 
     //Final Round result
-    assign dsi_res = dso << {bs, 3'b000};
+    assign dsi_res = {24'b0, dso} << {bs, 3'b000};
 
     //Middle Round result
     logic [7:0] dso_x1, dso_x2, dso_x4, dso_x8;
@@ -229,6 +230,7 @@ module ALU(
             2: dsmi_res = {inv_mix_col[15:0], inv_mix_col[31:16]};
             3: dsmi_res = {inv_mix_col[7:0], inv_mix_col[31:8]};
             default: dsmi_res = inv_mix_col;
+        endcase
     end
     
     always_comb begin
@@ -272,7 +274,6 @@ module ALU(
             13: begin   //SRA
                 RESULT = $signed(srcA) >>> srcB[4:0];
             end
-
             default: begin
                 RESULT = 'hDEADBEEF;
             end

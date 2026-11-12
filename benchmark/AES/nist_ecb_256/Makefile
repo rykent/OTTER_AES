@@ -20,7 +20,7 @@ LD = $(RISCV_PREFIX)ld
 OBJCOPY = $(RISCV_PREFIX)objcopy
 OBJDUMP = $(RISCV_PREFIX)objdump
 
-TARGET_ARCH =  -march=rv32i -mabi=ilp32
+TARGET_ARCH =  -march=rv32i_zkne_zknd -mabi=ilp32
 ifneq ($(C_FILES),)
 CCFLAGS = -O3 $(TARGET_ARCH) -ffunction-sections -fdata-sections -g
 else
